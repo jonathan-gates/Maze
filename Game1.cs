@@ -162,18 +162,20 @@ namespace Maze
 
                     m_spriteBatch.Draw(
                         texWallToRender, 
-                        new Rectangle( cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
+                        new Rectangle((m_graphics.PreferredBackBufferWidth - tileSize * m_maze.size) / 2 + cell.x * tileSize, (m_graphics.PreferredBackBufferHeight - tileSize * m_maze.size) / 2 + cell.y * tileSize, tileSize, tileSize),
                         null,
                         Color.White,
                         0,
-                        new Vector2(texWallToRender.Width / 2, texWallToRender.Height / 2),
+                        new Vector2(0, 0),
                         SpriteEffects.None,
                         0);
                 }
 
+                //new Rectangle(cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
+
                 m_spriteBatch.Draw(
                         m_texBrain,
-                        new Rectangle((m_maze.size - 1) * tileSize + (m_mazeCenterX / m_maze.size), (m_maze.size - 1) * tileSize + (m_mazeCenterY / m_maze.size), (int)(tileSize * 0.7), (int)(tileSize * 0.7)),
+                        new Rectangle(((m_graphics.PreferredBackBufferWidth - tileSize * m_maze.size) / 2) + (m_maze.size - 1) * tileSize + (tileSize / 2), (m_graphics.PreferredBackBufferHeight - tileSize * m_maze.size) / 2 + (m_maze.size - 1) * tileSize + (tileSize / 2), (int)(tileSize * 0.7), (int)(tileSize * 0.7)),
                         null,
                         Color.White,
                         (float)(-0.3),
@@ -187,7 +189,7 @@ namespace Maze
                     {
                         m_spriteBatch.Draw(
                         m_texCharacter,
-                        new Rectangle(m_character.location.x * tileSize + (m_mazeCenterX / m_maze.size), m_character.location.y * tileSize + (m_mazeCenterY / m_maze.size), (int)(tileSize * 0.7), (int)(tileSize * 0.7)),
+                        new Rectangle(((m_graphics.PreferredBackBufferWidth - tileSize * m_maze.size) / 2) + m_character.location.x * tileSize + (tileSize / 2), ((m_graphics.PreferredBackBufferHeight - tileSize * m_maze.size) / 2) + m_character.location.y * tileSize + (tileSize / 2), (int)(tileSize * 0.7), (int)(tileSize * 0.7)),
                         null,
                         Color.White,
                         0,
