@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Maze
 {
@@ -151,41 +152,37 @@ namespace Maze
             {
                 int tileSize = m_maze_length / m_maze.size;
 
-                for (int i = 0; i > m_maze.size; i++)
-                {
-                    for (int j = 0; j > m_maze.size; j++) 
-                    {
-                        Cell cell = m_maze.grid[i, j];
-                        Texture2D texWallToRender;
-                        if (cell.isNotWalled()) { texWallToRender = m_texTile; }
-                        else if (cell.isN()) { texWallToRender = m_texTileN; }
-                        else if (cell.isNS()) { texWallToRender = m_texTileNS; }
-                        else if (cell.isNSE()) { texWallToRender = m_texTileNSE; }
-                        else if (cell.isNSEW()) { texWallToRender = m_texTileNSEW; }
-                        else if (cell.isNSW()) { texWallToRender = m_texTileNSW; }
-                        else if (cell.isNE()) { texWallToRender = m_texTileNE; }
-                        else if (cell.isNEW()) { texWallToRender = m_texTileNEW; }
-                        else if (cell.isNW()) { texWallToRender = m_texTileNW; }
-                        else if (cell.isS()) { texWallToRender = m_texTileS; }
-                        else if (cell.isSE()) { texWallToRender = m_texTileSE; }
-                        else if (cell.isSEW()) { texWallToRender = m_texTileSEW; }
-                        else if (cell.isSW()) { texWallToRender = m_texTileSW; }
-                        else if (cell.isE()) { texWallToRender = m_texTileE; }
-                        else if (cell.isEW()) { texWallToRender = m_texTileEW; }
-                        else { texWallToRender = m_texTileW; }
 
-                        m_spriteBatch.Draw(
-                            texWallToRender,
-                            new Rectangle(cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
-                            null,
-                            Color.White,
-                            0,
-                            new Vector2(texWallToRender.Width / 2, texWallToRender.Height / 2),
-                            SpriteEffects.None,
-                            0);
-                    }
+                foreach (Cell cell in m_maze.grid)
+                {
+                    Texture2D texWallToRender;
+                    if (cell.isNotWalled()) { texWallToRender = m_texTile; }
+                    else if (cell.isN()) { texWallToRender = m_texTileN; }
+                    else if (cell.isNS()) { texWallToRender = m_texTileNS; }
+                    else if (cell.isNSE()) { texWallToRender = m_texTileNSE; }
+                    else if (cell.isNSEW()) { texWallToRender = m_texTileNSEW; }
+                    else if (cell.isNSW()) { texWallToRender = m_texTileNSW; }
+                    else if (cell.isNE()) { texWallToRender = m_texTileNE; }
+                    else if (cell.isNEW()) { texWallToRender = m_texTileNEW; }
+                    else if (cell.isNW()) { texWallToRender = m_texTileNW; }
+                    else if (cell.isS()) { texWallToRender = m_texTileS; }
+                    else if (cell.isSE()) { texWallToRender = m_texTileSE; }
+                    else if (cell.isSEW()) { texWallToRender = m_texTileSEW; }
+                    else if (cell.isSW()) { texWallToRender = m_texTileSW; }
+                    else if (cell.isE()) { texWallToRender = m_texTileE; }
+                    else if (cell.isEW()) { texWallToRender = m_texTileEW; }
+                    else { texWallToRender = m_texTileW; }
+
+                    m_spriteBatch.Draw(
+                        texWallToRender, 
+                        new Rectangle( cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
+                        null,
+                        Color.White,
+                        0,
+                        new Vector2(texWallToRender.Width / 2, texWallToRender.Height / 2),
+                        SpriteEffects.None,
+                        0);
                 }
-                
                 /////////////////////
                 Texture2D testWallToRender;
                 Cell test = m_maze.grid[2, 1];
@@ -275,7 +272,7 @@ namespace Maze
 
         private void onNew5x5(GameTime gameTime, float scale)
         {
-            // TODO: reset score on maze regen
+            // todo: reset score on maze regen
             // give character to 0,0?
             //this.m_maze = new Maze(5);
 
@@ -290,31 +287,30 @@ namespace Maze
                     maze.grid[i, j].w = null;
                 }
             }
-            maze.grid[0, 0].s = maze.grid[1, 0];
+            maze.grid[0, 0].s = maze.grid[0, 1];
 
-            maze.grid[0, 1].s = maze.grid[1, 1];
-            maze.grid[0, 1].e = maze.grid[0, 2];
+            maze.grid[1, 0].s = maze.grid[1, 1];
+            maze.grid[1, 0].e = maze.grid[2, 0];
 
-            maze.grid[0, 2].w = maze.grid[0, 1];
-            maze.grid[0, 2].s = maze.grid[1, 2];
+            maze.grid[2, 0].w = maze.grid[1, 0];
+            maze.grid[2, 0].s = maze.grid[2, 1];
 
-            maze.grid[1, 0].n = maze.grid[0, 0];
-            maze.grid[1, 0].e = maze.grid[1, 1];
-            maze.grid[1, 0].s = maze.grid[2, 0];
+            maze.grid[0, 1].n = maze.grid[0, 0];
+            maze.grid[0, 1].e = maze.grid[1, 1];
+            maze.grid[0, 1].s = maze.grid[0, 2];
 
-            maze.grid[1, 1].n = maze.grid[0, 1];
-            maze.grid[1, 1].s = maze.grid[2, 1];
-            maze.grid[1, 1].w = maze.grid[1, 0];
+            maze.grid[1, 1].n = maze.grid[1, 0];
+            maze.grid[1, 1].s = maze.grid[1, 2];
+            maze.grid[1, 1].w = maze.grid[0, 1];
 
-            maze.grid[1, 2].n = maze.grid[0, 2];
+            maze.grid[2, 1].n = maze.grid[2, 0];
 
-            maze.grid[2, 0].n = maze.grid[1, 0];
+            maze.grid[0, 2].n = maze.grid[0, 1];
 
-            maze.grid[2, 1].n = maze.grid[1, 1];
-            maze.grid[2, 1].e = maze.grid[2, 2];
+            maze.grid[1, 2].n = maze.grid[1, 1];
+            maze.grid[1, 2].e = maze.grid[2, 2];
 
-            maze.grid[2, 2].w = maze.grid[2, 1];
-
+            maze.grid[2, 2].w = maze.grid[1, 2];
             this.m_maze = maze;
         }
 
@@ -362,11 +358,14 @@ namespace Maze
         public int size { get; private set; }
         public Cell[,] grid { get; private set; }
 
+        private Random random;
+
 
         public Maze(int size)
         {
             this.size = size;
             this.grid = new Cell[size, size];
+            this.random = new Random();
 
             initializePrims();
 
@@ -383,7 +382,7 @@ namespace Maze
             }
 
             HashSet<Cell> maze = new HashSet<Cell> { };
-            List<Cell> frontier = new List<Cell> { };
+            HashSet<Cell> frontier = new HashSet<Cell> { };
 
             Cell startCell = grid[0,0];
             maze.Add(startCell);
@@ -392,24 +391,23 @@ namespace Maze
                 frontier.Add(cell);
             }
 
-            Random random = new Random();
             while (frontier.Count > 0)
             {
                 // randomly pick cell from frontier
-                int index = random.Next(frontier.Count);
+                Cell ranCell = frontier.ElementAt(this.random.Next(frontier.Count));
 
-                List<Cell> neighbors = getNeighbors(frontier[index]);
+                List<Cell> neighbors = getNeighbors(ranCell);
 
-                randomRemoveWall(frontier[index], neighbors, maze);
-                maze.Add(frontier[index]);
+                maze.Add(ranCell);
+                randomRemoveWall(ranCell, neighbors, maze);
 
                 foreach (var cell in neighbors)
                 {
                     if (!maze.Contains(cell) && !frontier.Contains(cell)) frontier.Add(cell);
                 }
 
+                frontier.Remove(ranCell);
 
-                frontier.RemoveAt(index);
             }
 
         }
@@ -417,8 +415,8 @@ namespace Maze
         private List<Cell> getNeighbors(Cell cell)
         {
             List<Cell> cells = new List<Cell>();
-            if (cell.y != 0) cells.Add(grid[cell.x, cell.y - 1]);
-            if (cell.x != 0) cells.Add(grid[cell.x - 1, cell.y]);
+            if (cell.y > 0) cells.Add(grid[cell.x, cell.y - 1]);
+            if (cell.x > 0) cells.Add(grid[cell.x - 1, cell.y]);
             if (cell.y < size - 1) cells.Add(grid[cell.x, cell.y + 1]);
             if (cell.x < size - 1) cells.Add(grid[cell.x + 1, cell.y]);
             return cells;
@@ -426,33 +424,33 @@ namespace Maze
 
         private void randomRemoveWall(Cell mainCell, List<Cell> neightbors, HashSet<Cell> maze)
         {
-            List<Cell> options = new List<Cell>();
+            HashSet<Cell> options = new HashSet<Cell>();
             foreach (var cell in neightbors)
             { 
                 if (maze.Contains(cell)) options.Add(cell);
             }
-            Random random = new Random();
-            int index = random.Next(options.Count);
+            
+            Cell randomCell = options.ElementAt(this.random.Next(options.Count));
 
-            if (mainCell.x > neightbors[index].x)
+            if (mainCell.x > randomCell.x)
             {
-                mainCell.n = neightbors[index];
-                neightbors[index].s = mainCell;
+                mainCell.w = randomCell;
+                randomCell.e = mainCell;
             }
-            else if (mainCell.x < neightbors[index].x)
+            else if (mainCell.x < randomCell.x)
             {
-                mainCell.s = neightbors[index];
-                neightbors[index].n = mainCell;
+                mainCell.e = randomCell;
+                randomCell.w = mainCell;
             }
-            else if (mainCell.y > neightbors[index].y)
+            else if (mainCell.y > randomCell.y)
             {
-                mainCell.w = neightbors[index];
-                neightbors[index].e = mainCell;
+                mainCell.n = randomCell;
+                randomCell.s = mainCell;
             }
             else
             {
-                mainCell.e = neightbors[index];
-                neightbors[index].w = mainCell;
+                mainCell.s = randomCell;
+                randomCell.n = mainCell;
             }
         }
 
