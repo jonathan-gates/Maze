@@ -26,6 +26,9 @@ namespace Maze
 
         private Texture2D m_texBrain;
 
+        // fonts
+        private SpriteFont m_fontFoulFiend24;
+
         // tiles
         private Texture2D m_texTile;
         private Texture2D m_texTileN;
@@ -97,6 +100,10 @@ namespace Maze
         {
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // fonts
+            m_fontFoulFiend24 = this.Content.Load<SpriteFont>("Fonts/foul_fiend");
+
+            // textures
             m_texCharacter = this.Content.Load<Texture2D>("Images/zombie");
             m_texBrain = this.Content.Load<Texture2D>("Images/brain");
             m_texTile = this.Content.Load<Texture2D>("Images/Tiles/tile");
@@ -174,8 +181,6 @@ namespace Maze
                         0);
                 }
 
-                //new Rectangle(cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
-
                 m_spriteBatch.Draw(
                         m_texBrain,
                         new Rectangle(mazeStartX + (m_maze.size - 1) * tileSize + (tileSize / 2), mazeStartY + (m_maze.size - 1) * tileSize + (tileSize / 2), objectsOnMazeSizing, objectsOnMazeSizing),
@@ -235,9 +240,43 @@ namespace Maze
                 ///////////////////////
             }
 
+            // test string /////////////////////////
+            const string demo = "This is a test.";
+            float scaleOutline = 0.75f;
+            Vector2 string1Size = m_fontFoulFiend24.MeasureString(demo) * scaleOutline;
+            drawOutlineText(
+                m_spriteBatch,
+                m_fontFoulFiend24, demo,
+                Color.Black, Color.White,
+                new Vector2(
+                    m_graphics.PreferredBackBufferWidth / 2 - string1Size.X / 2,
+                    m_graphics.PreferredBackBufferHeight / 2 + (m_graphics.PreferredBackBufferHeight / 4 - string1Size.Y / 4)),
+                scaleOutline);
+            // test string //////////////////////
+
             m_spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        protected static void drawOutlineText(SpriteBatch spriteBatch, SpriteFont font, string text, Color outlineColor, Color frontColor, Vector2 position, float scale)
+        {
+            const float PIXEL_OFFSET = 1.0f;
+            //
+            // Offset to the upper left and lower right - faster, but not as good
+            //spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            //spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+
+            //
+            // Offset in each of left,right, up, down directions - slower, but good
+            spriteBatch.DrawString(font, text, position - new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(PIXEL_OFFSET * scale, 0), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position - new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+            spriteBatch.DrawString(font, text, position + new Vector2(0, PIXEL_OFFSET * scale), outlineColor, 0, Vector2.Zero, scale, SpriteEffects.None, 1f);
+
+            //
+            // This sits inside the text rendering done just above
+            spriteBatch.DrawString(font, text, position, frontColor, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
         #region Input Handlers
