@@ -14,7 +14,10 @@ namespace Maze
 
         private KeyboardInput m_inputKeyboard;
 
-        private Texture2D m_character;
+        private Character m_character;
+        private Texture2D m_texCharacter;
+
+        private Texture2D m_texBrain;
 
         private Maze m_maze;
 
@@ -67,6 +70,8 @@ namespace Maze
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            m_texCharacter = this.Content.Load<Texture2D>("Images/zombie");
+            m_texBrain = this.Content.Load<Texture2D>("Images/brain");
         }
 
         protected override void Update(GameTime gameTime)
@@ -90,6 +95,15 @@ namespace Maze
             m_spriteBatch.Begin();
 
             // m_spriteBatch.Draw(/////);
+            m_spriteBatch.Draw(
+                m_texCharacter,
+                 new Rectangle(1000, 1000, 400, 400),
+                null,
+                Color.White,
+                0,
+                new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
+                SpriteEffects.None,
+                0);
 
             m_spriteBatch.End();
 
@@ -103,7 +117,16 @@ namespace Maze
         /// </summary>
         private void onMoveUp(GameTime gameTime, float scale)
         {
-
+            if (m_character != null && m_character.location.n != null)
+            {
+                m_character.location = m_character.location.n;
+                if (!m_character.location.visited)
+                {
+                    m_character.location.visited = true;
+                    // add to breadcrumbs
+                }
+                // edit scores / edit shortest path
+            }
         }
 
         private void onMoveDown(GameTime gameTime, float scale)
@@ -139,6 +162,7 @@ namespace Maze
         private void onNew5x5(GameTime gameTime, float scale)
         {
             // TODO: reset score on maze regen
+            // give character to 0,0?
             this.m_maze = new Maze(5);
         }
 
