@@ -30,6 +30,7 @@ namespace Maze
         private SpriteFont m_fontFoulFiend24;
 
         // tiles
+        private Texture2D m_texBoarder;
         private Texture2D m_texTile;
         private Texture2D m_texTileN;
         private Texture2D m_texTileNS;
@@ -104,6 +105,7 @@ namespace Maze
             m_fontFoulFiend24 = this.Content.Load<SpriteFont>("Fonts/foul_fiend");
 
             // textures
+            m_texBoarder = this.Content.Load<Texture2D>("Images/boarder");
             m_texCharacter = this.Content.Load<Texture2D>("Images/zombie");
             m_texBrain = this.Content.Load<Texture2D>("Images/brain");
             m_texTile = this.Content.Load<Texture2D>("Images/Tiles/tile");
@@ -147,7 +149,8 @@ namespace Maze
             {
                 int tileSize = m_maze_length / m_maze.size;
                 int mazeStartX = (m_graphics.PreferredBackBufferWidth - tileSize * m_maze.size) / 2;
-                int mazeStartY = (m_graphics.PreferredBackBufferHeight - tileSize * m_maze.size) / 2;
+                int offsetY = 30;
+                int mazeStartY = (m_graphics.PreferredBackBufferHeight - tileSize * m_maze.size) / 2 + offsetY;
                 int objectsOnMazeSizing = (int)(tileSize * 0.7);
 
                 foreach (Cell cell in m_maze.grid)
@@ -180,6 +183,15 @@ namespace Maze
                         SpriteEffects.None,
                         0);
                 }
+
+                int borderWidth = 4;
+
+                m_spriteBatch.Draw(
+                    m_texBoarder, // A solid black texture; ensure you have a 1x1 black texture to scale
+                    new Rectangle(mazeStartX - borderWidth, mazeStartY - borderWidth, tileSize * m_maze.size + (borderWidth * 2), tileSize * m_maze.size + (borderWidth * 2)),
+                    Color.Black // Specify color if your method supports it, otherwise the texture needs to be black
+                );
+
 
                 m_spriteBatch.Draw(
                         m_texBrain,
