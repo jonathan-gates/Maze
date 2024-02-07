@@ -15,6 +15,10 @@ namespace Maze
         private KeyboardInput m_inputKeyboard;
 
         private Maze m_maze;
+        private Queue<Cell> m_shortestPath;
+        private int m_maze_length;
+        private int m_mazeCenterX;
+        private int m_mazeCenterY;
 
         private Character m_character;
         private Texture2D m_texCharacter;
@@ -51,7 +55,12 @@ namespace Maze
             m_graphics.PreferredBackBufferWidth = 1920;
             m_graphics.PreferredBackBufferHeight = 1080;
 
+
             m_graphics.ApplyChanges();
+
+            m_maze_length = m_graphics.PreferredBackBufferWidth / 2;
+            m_mazeCenterX = m_graphics.PreferredBackBufferWidth / 2;
+            m_mazeCenterY = m_graphics.PreferredBackBufferHeight / 2;
 
             // Setup input handlers
             m_inputKeyboard = new KeyboardInput();
@@ -135,8 +144,44 @@ namespace Maze
                 Color.White,
                 0,
                 new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
-                SpriteEffects.None,
+                SpriteEffects.FlipHorizontally,
                 0);
+
+            if (m_maze != null)
+            {
+                int tileSize = m_maze_length / m_maze.size;
+
+                foreach (Cell cell in m_maze.grid)
+                {
+                    Texture2D texWallToRender;
+                    if (cell.isNotWalled()) { texWallToRender = m_texTile; }
+                    else if (cell.isN()) { texWallToRender = m_texTileN; }
+                    else if (cell.isNS()) { texWallToRender = m_texTileNS; }
+                    else if (cell.isNSE()) { texWallToRender = m_texTileNSE; }
+                    else if (cell.isNSEW()) { texWallToRender = m_texTileNSEW; }
+                    else if (cell.isNSW()) { texWallToRender = m_texTileNSW; }
+                    else if (cell.isNE()) { texWallToRender = m_texTileNE; }
+                    else if (cell.isNEW()) { texWallToRender = m_texTileNEW; }
+                    else if (cell.isNW()) { texWallToRender = m_texTileNW; }
+                    else if (cell.isS()) { texWallToRender = m_texTileS; }
+                    else if (cell.isSE()) { texWallToRender = m_texTileSE; }
+                    else if (cell.isSEW()) { texWallToRender = m_texTileSEW; }
+                    else if (cell.isSW()) { texWallToRender = m_texTileSW; }
+                    else if (cell.isE()) { texWallToRender = m_texTileE; }
+                    else if (cell.isEW()) { texWallToRender = m_texTileEW; }
+                    else { texWallToRender = m_texTileW; }
+
+                    m_spriteBatch.Draw(
+                        texWallToRender, 
+                        new Rectangle( cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
+                        null,
+                        Color.White,
+                        0,
+                        new Vector2(texWallToRender.Width / 2, texWallToRender.Height / 2),
+                        SpriteEffects.None,
+                        0);
+                }
+            }
 
             m_spriteBatch.End();
 
@@ -156,15 +201,14 @@ namespace Maze
                 if (!m_character.location.visited)
                 {
                     m_character.location.visited = true;
-                    // add to breadcrumbs
+                    // change score
+                    // edit shortest path
                 }
-                // edit scores / edit shortest path
             }
         }
 
         private void onMoveDown(GameTime gameTime, float scale)
         {
-
         }
 
         private void onMoveLeft(GameTime gameTime, float scale)
@@ -176,6 +220,7 @@ namespace Maze
         {
 
         }
+
 
         private void onToggleHint(GameTime gameTime, float scale)
         {
@@ -196,22 +241,60 @@ namespace Maze
         {
             // TODO: reset score on maze regen
             // give character to 0,0?
-            this.m_maze = new Maze(5);
+            //this.m_maze = new Maze(5);
+
+            Maze maze = new Maze(3);
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    maze.grid[i, j].n = null;
+                    maze.grid[i, j].s = null;
+                    maze.grid[i, j].e = null;
+                    maze.grid[i, j].w = null;
+                }
+            }
+            maze.grid[0, 0].s = maze.grid[1, 0];
+
+            maze.grid[0, 1].s = maze.grid[1, 1];
+            maze.grid[0, 1].e = maze.grid[0, 2];
+
+            maze.grid[0, 2].w = maze.grid[0, 1];
+            maze.grid[0, 2].s = maze.grid[1, 2];
+
+            maze.grid[1, 0].n = maze.grid[0, 0];
+            maze.grid[1, 0].e = maze.grid[1, 1];
+            maze.grid[1, 0].s = maze.grid[2, 0];
+
+            maze.grid[1, 1].n = maze.grid[0, 1];
+            maze.grid[1, 1].s = maze.grid[2, 1];
+            maze.grid[1, 1].w = maze.grid[1, 0];
+
+            maze.grid[1, 2].n = maze.grid[0, 2];
+
+            maze.grid[2, 0].n = maze.grid[1, 0];
+
+            maze.grid[2, 1].n = maze.grid[1, 1];
+            maze.grid[2, 1].e = maze.grid[2, 2];
+
+            maze.grid[2, 2].w = maze.grid[2, 1];
+
+            this.m_maze = maze;
         }
 
         private void onNew10x10(GameTime gameTime, float scale)
         {
-            this.m_maze = new Maze(5);
+            this.m_maze = new Maze(10);
         }
 
         private void onNew15x15(GameTime gameTime, float scale)
         {
-            this.m_maze = new Maze(5);
+            this.m_maze = new Maze(15);
         }
 
         private void onNew20x20(GameTime gameTime, float scale)
         {
-            this.m_maze = new Maze(5);
+            this.m_maze = new Maze(20);
         }
 
         private void onDisplayHighScores(GameTime gameTime, float scale)
@@ -234,38 +317,6 @@ namespace Maze
         public Character(Cell location)
         {
             this.location = location;
-        }
-
-        public void moveUp()
-        { 
-            if (location.n != null) 
-            {
-                location = location.n;
-            }
-        }
-
-        public void moveDown()
-        {
-            if (location.s != null)
-            {
-                location = location.s;
-            }
-        }
-
-        public void moveLeft()
-        {
-            if (location.w != null)
-            {
-                location = location.w;
-            }
-        }
-
-        public void moveRight()
-        {
-            if (location.e != null)
-            {
-                location = location.e;
-            }
         }
 
     }
@@ -310,14 +361,17 @@ namespace Maze
             {
                 // randomly pick cell from frontier
                 int index = random.Next(frontier.Count);
-                maze.Add(frontier[index]);
+
                 List<Cell> neighbors = getNeighbors(frontier[index]);
-                foreach (var cell in neighbors)
-                {
-                    if (!maze.Contains(cell)) frontier.Add(cell);
-                }
 
                 randomRemoveWall(frontier[index], neighbors, maze);
+                maze.Add(frontier[index]);
+
+                foreach (var cell in neighbors)
+                {
+                    if (!maze.Contains(cell) && !frontier.Contains(cell)) frontier.Add(cell);
+                }
+
 
                 frontier.RemoveAt(index);
             }
@@ -328,7 +382,7 @@ namespace Maze
         {
             List<Cell> cells = new List<Cell>();
             if (cell.y != 0) cells.Add(grid[cell.x, cell.y - 1]);
-            if (cell.x != 0) cells.Add(grid[cell.x, cell.y - 1]);
+            if (cell.x != 0) cells.Add(grid[cell.x - 1, cell.y]);
             if (cell.y < size - 1) cells.Add(grid[cell.x, cell.y + 1]);
             if (cell.x < size - 1) cells.Add(grid[cell.x + 1, cell.y]);
             return cells;
@@ -341,7 +395,7 @@ namespace Maze
             { 
                 if (maze.Contains(cell)) options.Add(cell);
             }
-            Random random= new Random();
+            Random random = new Random();
             int index = random.Next(options.Count);
 
             if (mainCell.x > neightbors[index].x)
@@ -383,6 +437,86 @@ namespace Maze
             this.x = x;
             this.y = y;
             this.visited = false;
+        }
+
+        public bool isNotWalled()
+        {
+            return n != null && s != null && e != null && w != null;
+        }
+
+        public bool isN()
+        {
+            return n == null && s != null && e != null && w != null;
+        }
+
+        public bool isNS()
+        {
+            return n == null && s == null && e != null && w != null;
+        }
+
+        public bool isNSE()
+        {
+            return n == null && s == null && e == null && w != null;
+        }
+
+        public bool isNSEW()
+        {
+            return n == null && s == null && e == null && w == null;
+        }
+
+        public bool isNSW()
+        {
+            return n == null && s == null && e != null && w == null;
+        }
+
+        public bool isNE()
+        {
+            return n == null && s != null && e == null && w != null;
+        }
+
+        public bool isNEW()
+        {
+            return n == null && s != null && e == null && w == null;
+        }
+
+        public bool isNW()
+        {
+            return n == null && s != null && e != null && w == null;
+        }
+
+        public bool isS()
+        {
+            return n != null && s == null && e != null && w != null;
+        }
+
+        public bool isSE()
+        {
+            return n != null && s == null && e == null && w != null;
+        }
+
+        public bool isSEW()
+        {
+            return n != null && s == null && e == null && w == null;
+        }
+
+        public bool isSW()
+        {
+            return n != null && s == null && e != null && w == null;
+        }
+
+        public bool isE()
+        {
+            return n != null && s != null && e == null && w != null;
+        }
+
+        public bool isEW()
+        {
+            return n != null && s != null && e == null && w == null;
+        }
+
+        public bool isW()
+        {
+            return n != null && s != null && e != null && w == null;
         }
 
     }
