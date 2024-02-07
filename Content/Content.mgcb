@@ -25,7 +25,7 @@
 /processorParam:TextureFormat=Color
 /build:Images/brain.png
 
-#begin Images/Tiles/Ltitle.png
+#begin Images/Tiles/tile.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -35,9 +35,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/Ltitle.png
+/build:Images/Tiles/tile.png
 
-#begin Images/Tiles/LtitleE.png
+#begin Images/Tiles/tileE.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -47,9 +47,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleE.png
+/build:Images/Tiles/tileE.png
 
-#begin Images/Tiles/LtitleEW.png
+#begin Images/Tiles/tileEW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -59,9 +59,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleEW.png
+/build:Images/Tiles/tileEW.png
 
-#begin Images/Tiles/LtitleN.png
+#begin Images/Tiles/tileN.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -71,9 +71,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleN.png
+/build:Images/Tiles/tileN.png
 
-#begin Images/Tiles/LtitleNE.png
+#begin Images/Tiles/tileNE.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,9 +83,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleNE.png
+/build:Images/Tiles/tileNE.png
 
-#begin Images/Tiles/LtitleNEW.png
+#begin Images/Tiles/tileNEW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -95,9 +95,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleNEW.png
+/build:Images/Tiles/tileNEW.png
 
-#begin Images/Tiles/LtitleNS.png
+#begin Images/Tiles/tileNS.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -107,9 +107,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleNS.png
+/build:Images/Tiles/tileNS.png
 
-#begin Images/Tiles/LtitleNSE.png
+#begin Images/Tiles/tileNSE.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -119,9 +119,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleNSE.png
+/build:Images/Tiles/tileNSE.png
 
-#begin Images/Tiles/LtitleNSEW.png
+#begin Images/Tiles/tileNSEW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -131,9 +131,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleNSEW.png
+/build:Images/Tiles/tileNSEW.png
 
-#begin Images/Tiles/LtitleNSW.png
+#begin Images/Tiles/tileNSW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -143,9 +143,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleNSW.png
+/build:Images/Tiles/tileNSW.png
 
-#begin Images/Tiles/LtitleNW.png
+#begin Images/Tiles/tileNW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -155,9 +155,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleNW.png
+/build:Images/Tiles/tileNW.png
 
-#begin Images/Tiles/LtitleS.png
+#begin Images/Tiles/tileS.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -167,9 +167,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleS.png
+/build:Images/Tiles/tileS.png
 
-#begin Images/Tiles/LtitleSE.png
+#begin Images/Tiles/tileSE.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -179,9 +179,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleSE.png
+/build:Images/Tiles/tileSE.png
 
-#begin Images/Tiles/LtitleSEW.png
+#begin Images/Tiles/tileSEW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -191,9 +191,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleSEW.png
+/build:Images/Tiles/tileSEW.png
 
-#begin Images/Tiles/LtitleSW.png
+#begin Images/Tiles/tileSW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -203,9 +203,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleSW.png
+/build:Images/Tiles/tileSW.png
 
-#begin Images/Tiles/LtitleW.png
+#begin Images/Tiles/tileW.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -215,7 +215,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Tiles/LtitleW.png
+/build:Images/Tiles/tileW.png
 
 #begin Images/zombie.png
 /importer:TextureImporter

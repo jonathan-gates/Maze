@@ -14,12 +14,30 @@ namespace Maze
 
         private KeyboardInput m_inputKeyboard;
 
+        private Maze m_maze;
+
         private Character m_character;
         private Texture2D m_texCharacter;
 
         private Texture2D m_texBrain;
 
-        private Maze m_maze;
+        // tiles
+        private Texture2D m_texTile;
+        private Texture2D m_texTileN;
+        private Texture2D m_texTileNS;
+        private Texture2D m_texTileNSE;
+        private Texture2D m_texTileNSEW;
+        private Texture2D m_texTileNSW;
+        private Texture2D m_texTileNE;
+        private Texture2D m_texTileNEW;
+        private Texture2D m_texTileNW;
+        private Texture2D m_texTileS;
+        private Texture2D m_texTileSE;
+        private Texture2D m_texTileSEW;
+        private Texture2D m_texTileSW;
+        private Texture2D m_texTileE;
+        private Texture2D m_texTileEW;
+        private Texture2D m_texTileW;
 
         public Game1()
         {
@@ -69,9 +87,24 @@ namespace Maze
         {
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             m_texCharacter = this.Content.Load<Texture2D>("Images/zombie");
             m_texBrain = this.Content.Load<Texture2D>("Images/brain");
+            m_texTile = this.Content.Load<Texture2D>("Images/Tiles/tile");
+            m_texTileN = this.Content.Load<Texture2D>("Images/Tiles/tileN");
+            m_texTileNS = this.Content.Load<Texture2D>("Images/Tiles/tileNS");
+            m_texTileNSE = this.Content.Load<Texture2D>("Images/Tiles/tileNSE");
+            m_texTileNSEW = this.Content.Load<Texture2D>("Images/Tiles/tileNSEW");
+            m_texTileNSW = this.Content.Load<Texture2D>("Images/Tiles/tileNSW");
+            m_texTileNE = this.Content.Load<Texture2D>("Images/Tiles/tileNE");
+            m_texTileNEW = this.Content.Load<Texture2D>("Images/Tiles/tileNEW");
+            m_texTileNW = this.Content.Load<Texture2D>("Images/Tiles/tileNW");
+            m_texTileS = this.Content.Load<Texture2D>("Images/Tiles/tileS");
+            m_texTileSE = this.Content.Load<Texture2D>("Images/Tiles/tileSE");
+            m_texTileSEW = this.Content.Load<Texture2D>("Images/Tiles/tileSEW");
+            m_texTileSW = this.Content.Load<Texture2D>("Images/Tiles/tileSW");
+            m_texTileE = this.Content.Load<Texture2D>("Images/Tiles/tileE");
+            m_texTileEW = this.Content.Load<Texture2D>("Images/Tiles/tileEW");
+            m_texTileW = this.Content.Load<Texture2D>("Images/Tiles/tileW");
         }
 
         protected override void Update(GameTime gameTime)
