@@ -137,17 +137,6 @@ namespace Maze
 
             m_spriteBatch.Begin();
 
-            // m_spriteBatch.Draw(/////);
-            m_spriteBatch.Draw(
-                m_texCharacter,
-                 new Rectangle(1000, 1000, 400, 400),
-                null,
-                Color.White,
-                0,
-                new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
-                SpriteEffects.FlipHorizontally,
-                0);
-
             if (m_maze != null)
             {
                 int tileSize = m_maze_length / m_maze.size;
@@ -183,8 +172,35 @@ namespace Maze
                         SpriteEffects.None,
                         0);
                 }
+
+                m_spriteBatch.Draw(
+                        m_texBrain,
+                        new Rectangle((m_maze.size - 1) * tileSize + (m_mazeCenterX / m_maze.size), (m_maze.size - 1) * tileSize + (m_mazeCenterY / m_maze.size), (int)(tileSize * 0.7), (int)(tileSize * 0.7)),
+                        null,
+                        Color.White,
+                        (float)(-0.3),
+                        new Vector2(m_texBrain.Width / 2, m_texBrain.Height / 2),
+                        SpriteEffects.None,
+                        0);
+
+                if (m_character != null)
+                {
+                    if (m_character.location != null)
+                    {
+                        m_spriteBatch.Draw(
+                        m_texCharacter,
+                        new Rectangle(m_character.location.x * tileSize + (m_mazeCenterX / m_maze.size), m_character.location.y * tileSize + (m_mazeCenterY / m_maze.size), (int)(tileSize * 0.7), (int)(tileSize * 0.7)),
+                        null,
+                        Color.White,
+                        0,
+                        new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
+                        SpriteEffects.FlipHorizontally,
+                        0);
+                    }
+                }
+
                 /////////////////////
-                Texture2D testWallToRender;
+                /*Texture2D testWallToRender;
                 Cell test = m_maze.grid[2, 1];
 
                 if (test.isNotWalled()) { testWallToRender = m_texTile; }
@@ -212,7 +228,7 @@ namespace Maze
                         0,
                         new Vector2(testWallToRender.Width / 2, testWallToRender.Height / 2),
                         SpriteEffects.None,
-                        0);
+                        0);*/
                 ///////////////////////
             }
 
@@ -242,16 +258,44 @@ namespace Maze
 
         private void onMoveDown(GameTime gameTime, float scale)
         {
+            if (m_character != null && m_character.location.s != null)
+            {
+                m_character.location = m_character.location.s;
+                if (!m_character.location.visited)
+                {
+                    m_character.location.visited = true;
+                    // change score
+                    // edit shortest path
+                }
+            }
         }
 
         private void onMoveLeft(GameTime gameTime, float scale)
         {
-
+            if (m_character != null && m_character.location.w != null)
+            {
+                m_character.location = m_character.location.w;
+                if (!m_character.location.visited)
+                {
+                    m_character.location.visited = true;
+                    // change score
+                    // edit shortest path
+                }
+            }
         }
 
         private void onMoveRight(GameTime gameTime, float scale)
         {
-
+            if (m_character != null && m_character.location.e != null)
+            {
+                m_character.location = m_character.location.e;
+                if (!m_character.location.visited)
+                {
+                    m_character.location.visited = true;
+                    // change score
+                    // edit shortest path
+                }
+            }
         }
 
 
@@ -274,9 +318,10 @@ namespace Maze
         {
             // todo: reset score on maze regen
             // give character to 0,0?
-            //this.m_maze = new Maze(5);
+            this.m_maze = new Maze(5);
+            this.m_character = new Character(this.m_maze.grid[0, 0]);
 
-            Maze maze = new Maze(3);
+            /*Maze maze = new Maze(3);
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -311,22 +356,25 @@ namespace Maze
             maze.grid[1, 2].e = maze.grid[2, 2];
 
             maze.grid[2, 2].w = maze.grid[1, 2];
-            this.m_maze = maze;
+            this.m_maze = maze;*/
         }
 
         private void onNew10x10(GameTime gameTime, float scale)
         {
             this.m_maze = new Maze(10);
+            this.m_character = new Character(this.m_maze.grid[0, 0]);
         }
 
         private void onNew15x15(GameTime gameTime, float scale)
         {
             this.m_maze = new Maze(15);
+            this.m_character = new Character(this.m_maze.grid[0, 0]);
         }
 
         private void onNew20x20(GameTime gameTime, float scale)
         {
             this.m_maze = new Maze(20);
+            this.m_character = new Character(this.m_maze.grid[0, 0]);
         }
 
         private void onDisplayHighScores(GameTime gameTime, float scale)
