@@ -16,7 +16,7 @@ namespace Maze
         private KeyboardInput m_inputKeyboard;
 
         private Maze m_maze;
-        private Queue<Cell> m_shortestPath;
+        private Stack<Cell> m_shortestPath;
         private int m_maze_length;
         private int m_mazeCenterX;
         private int m_mazeCenterY;
@@ -122,9 +122,10 @@ namespace Maze
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-
             m_inputKeyboard.Update(gameTime);
+
+            // check if game is won
+            // update time in game
 
             base.Update(gameTime);
         }
@@ -133,14 +134,11 @@ namespace Maze
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-
             m_spriteBatch.Begin();
 
             if (m_maze != null)
             {
                 int tileSize = m_maze_length / m_maze.size;
-
 
                 foreach (Cell cell in m_maze.grid)
                 {
@@ -239,8 +237,7 @@ namespace Maze
 
         #region Input Handlers
         /// <summary>
-        /// The various moveX methods subtract half of the height/width because the rendering is performed
-        /// from the center of the rectangle because it can rotate
+        /// The various move methods for the character, creation of the maze and its size, and other controls.
         /// </summary>
         private void onMoveUp(GameTime gameTime, float scale)
         {
