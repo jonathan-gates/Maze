@@ -151,36 +151,72 @@ namespace Maze
             {
                 int tileSize = m_maze_length / m_maze.size;
 
-                foreach (Cell cell in m_maze.grid)
+                for (int i = 0; i > m_maze.size; i++)
                 {
-                    Texture2D texWallToRender;
-                    if (cell.isNotWalled()) { texWallToRender = m_texTile; }
-                    else if (cell.isN()) { texWallToRender = m_texTileN; }
-                    else if (cell.isNS()) { texWallToRender = m_texTileNS; }
-                    else if (cell.isNSE()) { texWallToRender = m_texTileNSE; }
-                    else if (cell.isNSEW()) { texWallToRender = m_texTileNSEW; }
-                    else if (cell.isNSW()) { texWallToRender = m_texTileNSW; }
-                    else if (cell.isNE()) { texWallToRender = m_texTileNE; }
-                    else if (cell.isNEW()) { texWallToRender = m_texTileNEW; }
-                    else if (cell.isNW()) { texWallToRender = m_texTileNW; }
-                    else if (cell.isS()) { texWallToRender = m_texTileS; }
-                    else if (cell.isSE()) { texWallToRender = m_texTileSE; }
-                    else if (cell.isSEW()) { texWallToRender = m_texTileSEW; }
-                    else if (cell.isSW()) { texWallToRender = m_texTileSW; }
-                    else if (cell.isE()) { texWallToRender = m_texTileE; }
-                    else if (cell.isEW()) { texWallToRender = m_texTileEW; }
-                    else { texWallToRender = m_texTileW; }
+                    for (int j = 0; j > m_maze.size; j++) 
+                    {
+                        Cell cell = m_maze.grid[i, j];
+                        Texture2D texWallToRender;
+                        if (cell.isNotWalled()) { texWallToRender = m_texTile; }
+                        else if (cell.isN()) { texWallToRender = m_texTileN; }
+                        else if (cell.isNS()) { texWallToRender = m_texTileNS; }
+                        else if (cell.isNSE()) { texWallToRender = m_texTileNSE; }
+                        else if (cell.isNSEW()) { texWallToRender = m_texTileNSEW; }
+                        else if (cell.isNSW()) { texWallToRender = m_texTileNSW; }
+                        else if (cell.isNE()) { texWallToRender = m_texTileNE; }
+                        else if (cell.isNEW()) { texWallToRender = m_texTileNEW; }
+                        else if (cell.isNW()) { texWallToRender = m_texTileNW; }
+                        else if (cell.isS()) { texWallToRender = m_texTileS; }
+                        else if (cell.isSE()) { texWallToRender = m_texTileSE; }
+                        else if (cell.isSEW()) { texWallToRender = m_texTileSEW; }
+                        else if (cell.isSW()) { texWallToRender = m_texTileSW; }
+                        else if (cell.isE()) { texWallToRender = m_texTileE; }
+                        else if (cell.isEW()) { texWallToRender = m_texTileEW; }
+                        else { texWallToRender = m_texTileW; }
 
-                    m_spriteBatch.Draw(
-                        texWallToRender, 
-                        new Rectangle( cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
+                        m_spriteBatch.Draw(
+                            texWallToRender,
+                            new Rectangle(cell.x * tileSize + (m_mazeCenterX / m_maze.size), cell.y * tileSize + (m_mazeCenterY / m_maze.size), tileSize, tileSize),
+                            null,
+                            Color.White,
+                            0,
+                            new Vector2(texWallToRender.Width / 2, texWallToRender.Height / 2),
+                            SpriteEffects.None,
+                            0);
+                    }
+                }
+                
+                /////////////////////
+                Texture2D testWallToRender;
+                Cell test = m_maze.grid[2, 1];
+
+                if (test.isNotWalled()) { testWallToRender = m_texTile; }
+                else if (test.isN()) { testWallToRender = m_texTileN; }
+                else if (test.isNS()) { testWallToRender = m_texTileNS; }
+                else if (test.isNSE()) { testWallToRender = m_texTileNSE; }
+                else if (test.isNSEW()) { testWallToRender = m_texTileNSEW; }
+                else if (test.isNSW()) { testWallToRender = m_texTileNSW; }
+                else if (test.isNE()) { testWallToRender = m_texTileNE; }
+                else if (test.isNEW()) { testWallToRender = m_texTileNEW; }
+                else if (test.isNW()) { testWallToRender = m_texTileNW; }
+                else if (test.isS()) { testWallToRender = m_texTileS; }
+                else if (test.isSE()) { testWallToRender = m_texTileSE; }
+                else if (test.isSEW()) { testWallToRender = m_texTileSEW; }
+                else if (test.isSW()) { testWallToRender = m_texTileSW; }
+                else if (test.isE()) { testWallToRender = m_texTileE; }
+                else if (test.isEW()) { testWallToRender = m_texTileEW; }
+                else { testWallToRender = m_texTileW; }
+
+                m_spriteBatch.Draw(
+                        testWallToRender,
+                        new Rectangle( 1400, 500, tileSize, tileSize),
                         null,
                         Color.White,
                         0,
-                        new Vector2(texWallToRender.Width / 2, texWallToRender.Height / 2),
+                        new Vector2(testWallToRender.Width / 2, testWallToRender.Height / 2),
                         SpriteEffects.None,
                         0);
-                }
+                ///////////////////////
             }
 
             m_spriteBatch.End();
