@@ -367,6 +367,32 @@ namespace Maze
             spriteBatch.DrawString(font, text, position, frontColor, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
+        private void handleMove(Cell locationNew)
+        {
+            if (m_character.location.x == m_maze.size - 1 && m_character.location.y == m_maze.size - 1) 
+            {
+                return;
+            }
+            if (!m_character.location.visited)
+            {
+                m_character.location.visited = true;
+                // TODO: change score
+
+            }
+            if (m_shortestPath.Count > 0 && m_shortestPath.Peek() == locationNew)
+            {
+                m_shortestPath.Pop();
+            }
+            else
+            {
+                if (!(locationNew.x == m_maze.size - 1 && locationNew.y == m_maze.size - 1))
+                {
+                    m_shortestPath.Push(m_character.location);
+                }
+            }
+            m_character.location = locationNew;
+        }
+
         #region Input Handlers
         /// <summary>
         /// The various move methods for the character, creation of the maze and its size, and other controls.
@@ -375,13 +401,7 @@ namespace Maze
         {
             if (m_character != null && m_character.location.n != null)
             {
-                m_character.location = m_character.location.n;
-                if (!m_character.location.visited)
-                {
-                    m_character.location.visited = true;
-                    // TODO: change score
-                    // TODO: edit shortest path
-                }
+                handleMove(m_character.location.n);
             }
         }
 
@@ -389,15 +409,7 @@ namespace Maze
         {
             if (m_character != null && m_character.location.s != null)
             {
-                m_character.location = m_character.location.s;
-
-                // Can probably make this its own method
-                if (!m_character.location.visited)
-                {
-                    m_character.location.visited = true;
-                    // TODO: change score
-                }
-                // TODO: edit shortest path
+                handleMove(m_character.location.s);
             }
         }
 
@@ -405,13 +417,7 @@ namespace Maze
         {
             if (m_character != null && m_character.location.w != null)
             {
-                m_character.location = m_character.location.w;
-                if (!m_character.location.visited)
-                {
-                    m_character.location.visited = true;
-                    // change score
-                    // edit shortest path
-                }
+                handleMove(m_character.location.w);
             }
         }
 
@@ -419,13 +425,7 @@ namespace Maze
         {
             if (m_character != null && m_character.location.e != null)
             {
-                m_character.location = m_character.location.e;
-                if (!m_character.location.visited)
-                {
-                    m_character.location.visited = true;
-                    // change score
-                    // edit shortest path
-                }
+                handleMove(m_character.location.e);
             }
         }
 
