@@ -20,6 +20,11 @@ namespace Maze
         private int mazeStartX;
         private int m_maze_length;
         private int mazeStartY;
+        private bool displayHighScores;
+        private bool displayCredits;
+        private bool displayShortestPath;
+        private bool displayBreadcrumbs;
+        private bool displayHint;
 
         private Character m_character;
         private Texture2D m_texCharacter;
@@ -67,8 +72,14 @@ namespace Maze
             mazeStartX = (m_graphics.PreferredBackBufferWidth - m_maze_length) / 2;
             mazeStartY = (m_graphics.PreferredBackBufferHeight - m_maze_length) / 2 + 30;
 
-            // Setup input handlers
-            m_inputKeyboard = new KeyboardInput();
+            bool displayHighScore = false;
+            bool displayCredits = false;
+            bool displayShortestPath = false;
+            bool displayBreadcrumbs = false;
+            bool displayHint = false;
+
+        // Setup input handlers
+        m_inputKeyboard = new KeyboardInput();
 
             m_inputKeyboard.registerCommand(Keys.W, true, new IInputDevice.CommandDelegate(onMoveUp));
             m_inputKeyboard.registerCommand(Keys.S, true, new IInputDevice.CommandDelegate(onMoveDown));
@@ -93,6 +104,10 @@ namespace Maze
             m_inputKeyboard.registerCommand(Keys.F2, true, new IInputDevice.CommandDelegate(onNew10x10));
             m_inputKeyboard.registerCommand(Keys.F3, true, new IInputDevice.CommandDelegate(onNew15x15));
             m_inputKeyboard.registerCommand(Keys.F4, true, new IInputDevice.CommandDelegate(onNew20x20));
+
+            m_inputKeyboard.registerCommand(Keys.F5, true, new IInputDevice.CommandDelegate(onToggleHighScores));
+            m_inputKeyboard.registerCommand(Keys.F6, true, new IInputDevice.CommandDelegate(onToggleCredits));
+
 
             base.Initialize();
         }
@@ -133,8 +148,8 @@ namespace Maze
 
             m_inputKeyboard.Update(gameTime);
 
-            // check if game is won
-            // update time in game
+            // TODO: check if game is won
+            // TODO: update time in game
 
             base.Update(gameTime);
         }
@@ -208,41 +223,16 @@ namespace Maze
                     }
                 }
 
-                /////////////////////
-                /*Texture2D testWallToRender;
-                Cell test = m_maze.grid[2, 1];
+                // TODO: if shortest path display
 
-                if (test.isNotWalled()) { testWallToRender = m_texTile; }
-                else if (test.isN()) { testWallToRender = m_texTileN; }
-                else if (test.isNS()) { testWallToRender = m_texTileNS; }
-                else if (test.isNSE()) { testWallToRender = m_texTileNSE; }
-                else if (test.isNSEW()) { testWallToRender = m_texTileNSEW; }
-                else if (test.isNSW()) { testWallToRender = m_texTileNSW; }
-                else if (test.isNE()) { testWallToRender = m_texTileNE; }
-                else if (test.isNEW()) { testWallToRender = m_texTileNEW; }
-                else if (test.isNW()) { testWallToRender = m_texTileNW; }
-                else if (test.isS()) { testWallToRender = m_texTileS; }
-                else if (test.isSE()) { testWallToRender = m_texTileSE; }
-                else if (test.isSEW()) { testWallToRender = m_texTileSEW; }
-                else if (test.isSW()) { testWallToRender = m_texTileSW; }
-                else if (test.isE()) { testWallToRender = m_texTileE; }
-                else if (test.isEW()) { testWallToRender = m_texTileEW; }
-                else { testWallToRender = m_texTileW; }
+                // TODO: if breadcrumbs display
 
-                m_spriteBatch.Draw(
-                        testWallToRender,
-                        new Rectangle( 1400, 500, tileSize, tileSize),
-                        null,
-                        Color.White,
-                        0,
-                        new Vector2(testWallToRender.Width / 2, testWallToRender.Height / 2),
-                        SpriteEffects.None,
-                        0);*/
-                ///////////////////////
+                // TODO: if hint display
+
             }
 
+            // boarder
             int borderWidth = 6;
-
             m_spriteBatch.Draw(
                 m_texBoarder, // A solid black texture; ensure you have a 1x1 black texture to scale
                 new Rectangle(mazeStartX - borderWidth, mazeStartY - borderWidth, m_maze_length + (borderWidth * 2), m_maze_length + (borderWidth * 2)),
@@ -250,7 +240,7 @@ namespace Maze
             );
 
             // test string /////////////////////////
-            const string demo = "This is a test.";
+            /*const string demo = "This is a test.";
             float scaleOutline = 0.75f;
             Vector2 string1Size = m_fontFoulFiend24.MeasureString(demo) * scaleOutline;
             drawOutlineText(
@@ -260,8 +250,87 @@ namespace Maze
                 new Vector2(
                     m_graphics.PreferredBackBufferWidth / 2 - string1Size.X / 2,
                     m_graphics.PreferredBackBufferHeight / 2 + (m_graphics.PreferredBackBufferHeight / 4 - string1Size.Y / 4)),
-                scaleOutline);
+                scaleOutline);*/
             // test string //////////////////////
+
+            // TODO: Score
+            const string strScore = "Score: ";
+            float scaleOutlineScore = 0.75f;
+            Vector2 stringSizeScore = m_fontFoulFiend24.MeasureString(strScore) * scaleOutlineScore;
+            drawOutlineText(
+                m_spriteBatch,
+                m_fontFoulFiend24, strScore,
+                Color.Black, Color.White,
+                new Vector2(
+                    mazeStartX,
+                    mazeStartY - stringSizeScore.Y),
+                scaleOutlineScore);
+
+            // TODO: High Score
+            if (displayHighScores)
+            { 
+
+            }
+
+            // TODO:  Time
+            const string strTime = "Time: 00:00";
+            float scaleOutlineTime = 0.75f;
+            Vector2 stringSizeTime = m_fontFoulFiend24.MeasureString(strTime) * scaleOutlineTime;
+            drawOutlineText(
+                m_spriteBatch,
+                m_fontFoulFiend24, strTime,
+                Color.Black, Color.White,
+                new Vector2(
+                    m_graphics.PreferredBackBufferWidth - mazeStartX - stringSizeTime.X,
+                    mazeStartY - stringSizeTime.Y),
+                scaleOutlineTime);
+
+            // TODO: Controls
+            const string strControls = "Controls:\n" +
+                "  F1:  5x5 Maze\n" +
+                "  F2: 10x10 Maze\n" +
+                "  F3: 15x15 Maze\n" +
+                "  F4: 20x20 Maze\n" +
+                "  F5: Display High Scores\n" +
+                "  F6: Display Credits\n" +
+                "  H: Toggle Hint\n" +
+                "  B: Toggle Breadcrumbs\n" +
+                "  P: Toggle Path to Finish";
+            float scaleOutlineControls = 0.5f;
+            Vector2 stringSizeControls = m_fontFoulFiend24.MeasureString(strControls) * scaleOutlineControls;
+            drawOutlineText(
+                m_spriteBatch,
+                m_fontFoulFiend24, strControls,
+                Color.Black, Color.White,
+                new Vector2(
+                    mazeStartX + m_maze_length + 50,
+                    mazeStartY),
+                scaleOutlineControls);
+
+            // TODO: Credits
+            if (displayCredits)
+            {
+                const string strCredit = "Credits:\n" +
+                    "  Coded by Jonathan Gates\n" +
+                    "  Zombie Texture:\n" +
+                    "    Irina Mir (irmirx)\n" +
+                    "  Brain Texture:\n" +
+                    "    craftpix.net\n" +
+                    "  Foul Fiend Font:\n" +
+                    "    Chad Savage\n" +
+                    "";
+                float scaleOutlineCredits = 0.5f;
+                Vector2 stringSizeCredits = m_fontFoulFiend24.MeasureString(strCredit) * scaleOutlineCredits;
+                drawOutlineText(
+                    m_spriteBatch,
+                    m_fontFoulFiend24, strCredit,
+                    Color.Black, Color.White,
+                    new Vector2(
+                        50,
+                        mazeStartY),
+                    scaleOutlineCredits);
+            }
+
 
             m_spriteBatch.End();
 
@@ -300,8 +369,8 @@ namespace Maze
                 if (!m_character.location.visited)
                 {
                     m_character.location.visited = true;
-                    // change score
-                    // edit shortest path
+                    // TODO: change score
+                    // TODO: edit shortest path
                 }
             }
         }
@@ -311,12 +380,14 @@ namespace Maze
             if (m_character != null && m_character.location.s != null)
             {
                 m_character.location = m_character.location.s;
+
+                // Can probably make this its own method
                 if (!m_character.location.visited)
                 {
                     m_character.location.visited = true;
-                    // change score
-                    // edit shortest path
+                    // TODO: change score
                 }
+                // TODO: edit shortest path
             }
         }
 
@@ -366,7 +437,7 @@ namespace Maze
 
         private void onNew5x5(GameTime gameTime, float scale)
         {
-            // todo: reset score on maze regen
+            // TODO: reset score on maze regen
             // give character to 0,0?
             this.m_maze = new Maze(5);
             this.m_character = new Character(this.m_maze.grid[0, 0]);
@@ -427,14 +498,16 @@ namespace Maze
             this.m_character = new Character(this.m_maze.grid[0, 0]);
         }
 
-        private void onDisplayHighScores(GameTime gameTime, float scale)
+        private void onToggleHighScores(GameTime gameTime, float scale)
         {
-
+            this.displayCredits = false;
+            this.displayHighScores = !this.displayHighScores;
         }
 
-        private void onDisplayCredits(GameTime gameTime, float scale)
+        private void onToggleCredits(GameTime gameTime, float scale)
         {
-
+            this.displayHighScores = false;
+            this.displayCredits = !this.displayCredits;
         }
 
         #endregion
@@ -491,7 +564,6 @@ namespace Maze
 
             while (frontier.Count > 0)
             {
-                // randomly pick cell from frontier
                 Cell ranCell = frontier.ElementAt(this.random.Next(frontier.Count));
 
                 List<Cell> neighbors = getNeighbors(ranCell);
@@ -655,6 +727,6 @@ namespace Maze
 
     public class Score
     {
-
+        
     }
 }
