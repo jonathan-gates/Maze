@@ -34,7 +34,9 @@ namespace Maze
         private Character m_character;
         private Texture2D m_texCharacter;
 
-        private Texture2D m_texBrain;
+        private Texture2D m_texFinish;
+        private Texture2D m_texBreadcrumbs;
+        private Texture2D m_texShortestPath;
 
         // fonts
         private SpriteFont m_fontFoulFiend24;
@@ -80,13 +82,6 @@ namespace Maze
             m_shortestPath = new Stack<Cell> { };
             m_scores = new List<Score>();
             m_breadcrumbs = new HashSet<Cell> { };
-            isMazeWon = false;
-
-            bool displayHighScore = false;
-            bool displayCredits = false;
-            bool displayShortestPath = false;
-            bool displayBreadcrumbs = false;
-            bool displayHint = false;
 
             // Setup input handlers
             m_inputKeyboard = new KeyboardInput();
@@ -132,7 +127,10 @@ namespace Maze
             // textures
             m_texBoarder = this.Content.Load<Texture2D>("Images/boarder");
             m_texCharacter = this.Content.Load<Texture2D>("Images/zombie");
-            m_texBrain = this.Content.Load<Texture2D>("Images/brain");
+            m_texFinish = this.Content.Load<Texture2D>("Images/brain");
+            m_texBreadcrumbs = this.Content.Load<Texture2D>("Images/foot");
+            m_texShortestPath = this.Content.Load<Texture2D>("Images/skull");
+            // tile textures
             m_texTile = this.Content.Load<Texture2D>("Images/Tiles/tile");
             m_texTileN = this.Content.Load<Texture2D>("Images/Tiles/tileN");
             m_texTileNS = this.Content.Load<Texture2D>("Images/Tiles/tileNS");
@@ -165,7 +163,7 @@ namespace Maze
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             m_spriteBatch.Begin();
 
@@ -207,31 +205,14 @@ namespace Maze
                 }
 
                 m_spriteBatch.Draw(
-                        m_texBrain,
+                        m_texFinish,
                         new Rectangle(mazeStartX + (m_maze.size - 1) * tileSize + (tileSize / 2), mazeStartY + (m_maze.size - 1) * tileSize + (tileSize / 2), objectsOnMazeSizing, objectsOnMazeSizing),
                         null,
                         Color.White,
                         (float)(-0.3),
-                        new Vector2(m_texBrain.Width / 2, m_texBrain.Height / 2),
+                        new Vector2(m_texFinish.Width / 2, m_texFinish.Height / 2),
                         SpriteEffects.None,
                         0);
-
-                // TODO: shortest path display texture
-                if (displayShortestPath)
-                {
-                    foreach (Cell cell in m_shortestPath)
-                    {
-                        m_spriteBatch.Draw(
-                            m_texBrain,
-                            new Rectangle(mazeStartX + cell.x * tileSize, mazeStartY + cell.y * tileSize, tileSize, tileSize),
-                            null,
-                            Color.White,
-                            0,
-                            new Vector2(0, 0),
-                            SpriteEffects.None,
-                            0);
-                    }
-                }
 
                 // TODO: if breadcrumbs display texture
                 if (displayBreadcrumbs)
@@ -241,19 +222,34 @@ namespace Maze
                         foreach (Cell cell in m_breadcrumbs)
                         { 
                             m_spriteBatch.Draw(
-                                m_texCharacter,
+                                m_texBreadcrumbs,
                                 new Rectangle(mazeStartX + cell.x * tileSize + (tileSize / 2), mazeStartY + cell.y * tileSize + (tileSize / 2), (int)(objectsOnMazeSizing * 0.5), (int)(objectsOnMazeSizing * 0.5)),
                                 null,
                                 Color.White,
                                 0,
-                                new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
+                                new Vector2(m_texBreadcrumbs.Width / 2, m_texBreadcrumbs.Height / 2),
                                 SpriteEffects.FlipHorizontally,
                                 0);
                         }
                     }
                 }
 
-                // TODO: hint display texture
+                if (displayShortestPath)
+                {
+                    foreach (Cell cell in m_shortestPath)
+                    {
+                        m_spriteBatch.Draw(
+                            m_texShortestPath,
+                            new Rectangle(mazeStartX + cell.x * tileSize + (tileSize / 2), mazeStartY + cell.y * tileSize + (tileSize / 2), (int)(objectsOnMazeSizing * 0.5), (int)(objectsOnMazeSizing * 0.5)),
+                            null,
+                            Color.White,
+                            0,
+                            new Vector2(m_texShortestPath.Width / 2, m_texShortestPath.Height / 2),
+                            SpriteEffects.None,
+                            0);
+                    }
+                }
+
                 if (displayHint)
                 {
                     Cell cell;
@@ -261,12 +257,12 @@ namespace Maze
                     { 
                         cell = m_shortestPath.Peek();
                         m_spriteBatch.Draw(
-                            m_texBrain,
-                            new Rectangle(mazeStartX + cell.x * tileSize, mazeStartY + cell.y * tileSize, tileSize, tileSize),
+                            m_texShortestPath,
+                            new Rectangle(mazeStartX + cell.x * tileSize + (tileSize / 2), mazeStartY + cell.y * tileSize + (tileSize / 2), (int)(objectsOnMazeSizing * 0.5), (int)(objectsOnMazeSizing * 0.5)),
                             null,
                             Color.White,
                             0,
-                            new Vector2(0, 0),
+                            new Vector2(m_texShortestPath.Width / 2, m_texShortestPath.Height / 2),
                             SpriteEffects.None,
                             0);
                     }
@@ -473,6 +469,8 @@ namespace Maze
                 else
                 {
                     m_scores.Add(m_maze.score);
+                    displayCredits = false;
+                    displayHighScores = true;
                 }
             }
 
@@ -719,13 +717,16 @@ namespace Maze
             }
         }
 
+        // chatgpt for BFS
         public List<Cell> FindPathBFS(Cell start, Cell end)
         {
             Queue<Cell> queue = new Queue<Cell>();
             Dictionary<Cell, Cell> predecessors = new Dictionary<Cell, Cell>();
-            HashSet<Cell> visited = new HashSet<Cell>();
+            HashSet<Cell> visited = new HashSet<Cell>
+            {
+                start
+            };
 
-            visited.Add(start);
             queue.Enqueue(start);
 
             while (queue.Count > 0)
