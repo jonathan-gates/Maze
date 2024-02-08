@@ -17,9 +17,9 @@ namespace Maze
 
         private Maze m_maze;
         private Stack<Cell> m_shortestPath;
+        private int mazeStartX;
         private int m_maze_length;
-        private int m_mazeCenterX;
-        private int m_mazeCenterY;
+        private int mazeStartY;
 
         private Character m_character;
         private Texture2D m_texCharacter;
@@ -64,8 +64,8 @@ namespace Maze
             m_graphics.ApplyChanges();
 
             m_maze_length = m_graphics.PreferredBackBufferWidth / 2;
-            m_mazeCenterX = m_graphics.PreferredBackBufferWidth / 2;
-            m_mazeCenterY = m_graphics.PreferredBackBufferHeight / 2;
+            mazeStartX = (m_graphics.PreferredBackBufferWidth - m_maze_length) / 2;
+            mazeStartY = (m_graphics.PreferredBackBufferHeight - m_maze_length) / 2 + 30;
 
             // Setup input handlers
             m_inputKeyboard = new KeyboardInput();
@@ -148,9 +148,7 @@ namespace Maze
             if (m_maze != null)
             {
                 int tileSize = m_maze_length / m_maze.size;
-                int mazeStartX = (m_graphics.PreferredBackBufferWidth - tileSize * m_maze.size) / 2;
-                int offsetY = 30;
-                int mazeStartY = (m_graphics.PreferredBackBufferHeight - tileSize * m_maze.size) / 2 + offsetY;
+            
                 int objectsOnMazeSizing = (int)(tileSize * 0.7);
 
                 foreach (Cell cell in m_maze.grid)
@@ -183,15 +181,6 @@ namespace Maze
                         SpriteEffects.None,
                         0);
                 }
-
-                int borderWidth = 4;
-
-                m_spriteBatch.Draw(
-                    m_texBoarder, // A solid black texture; ensure you have a 1x1 black texture to scale
-                    new Rectangle(mazeStartX - borderWidth, mazeStartY - borderWidth, tileSize * m_maze.size + (borderWidth * 2), tileSize * m_maze.size + (borderWidth * 2)),
-                    Color.Black // Specify color if your method supports it, otherwise the texture needs to be black
-                );
-
 
                 m_spriteBatch.Draw(
                         m_texBrain,
@@ -251,6 +240,14 @@ namespace Maze
                         0);*/
                 ///////////////////////
             }
+
+            int borderWidth = 6;
+
+            m_spriteBatch.Draw(
+                m_texBoarder, // A solid black texture; ensure you have a 1x1 black texture to scale
+                new Rectangle(mazeStartX - borderWidth, mazeStartY - borderWidth, m_maze_length + (borderWidth * 2), m_maze_length + (borderWidth * 2)),
+                Color.Black // Specify color if your method supports it, otherwise the texture needs to be black
+            );
 
             // test string /////////////////////////
             const string demo = "This is a test.";
