@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Maze
 {
@@ -25,6 +26,8 @@ namespace Maze
         private bool displayShortestPath;
         private bool displayBreadcrumbs;
         private bool displayHint;
+
+        private List<Score> m_scores;
 
         private Character m_character;
         private Texture2D m_texCharacter;
@@ -73,6 +76,7 @@ namespace Maze
             mazeStartY = (m_graphics.PreferredBackBufferHeight - m_maze_length) / 2 + 30;
 
             m_shortestPath = new Stack<Cell> { };
+            m_scores = new List<Score>();
 
             bool displayHighScore = false;
             bool displayCredits = false;
@@ -80,8 +84,8 @@ namespace Maze
             bool displayBreadcrumbs = false;
             bool displayHint = false;
 
-        // Setup input handlers
-        m_inputKeyboard = new KeyboardInput();
+            // Setup input handlers
+            m_inputKeyboard = new KeyboardInput();
 
             m_inputKeyboard.registerCommand(Keys.W, true, new IInputDevice.CommandDelegate(onMoveUp));
             m_inputKeyboard.registerCommand(Keys.S, true, new IInputDevice.CommandDelegate(onMoveDown));
@@ -265,7 +269,9 @@ namespace Maze
             );
 
             // TODO: Score
-            const string strScore = "Score: ";
+            string strScore;
+            if (m_maze != null) strScore = "Score: " + m_maze.score.count.ToString();
+            else strScore = "Score: 0";
             float scaleOutlineScore = 0.75f;
             Vector2 stringSizeScore = m_fontFoulFiend24.MeasureString(strScore) * scaleOutlineScore;
             drawOutlineText(
@@ -335,10 +341,32 @@ namespace Maze
                     scaleOutlineCredits);
             }
 
-            // TODO: High Score
+            // High Scores
             if (displayHighScores)
             {
-
+                m_scores.Sort();
+                const int MAX_SCORES = 20;
+                string strHighScores = "Top " + MAX_SCORES.ToString() + " High Scores:\n";
+                int numScores = 0;
+                if (m_scores.Count > 0)
+                { 
+                    foreach (Score score in m_scores)
+                    {
+                        strHighScores += "  Score: " + score.count.ToString() + " : Size: " + score.mazeSize +  "\n";
+                        numScores++;
+                        if (numScores >= MAX_SCORES) break;
+                    }
+                }
+                float scaleOutlineHighScores = 0.5f;
+                Vector2 stringSizeHighScores = m_fontFoulFiend24.MeasureString(strHighScores) * scaleOutlineHighScores;
+                drawOutlineText(
+                    m_spriteBatch,
+                    m_fontFoulFiend24, strHighScores,
+                    Color.Black, Color.White,
+                    new Vector2(
+                        50,
+                        mazeStartY),
+                    scaleOutlineHighScores);
             }
 
 
@@ -373,12 +401,31 @@ namespace Maze
             {
                 return;
             }
-            if (!m_character.location.visited)
+
+            if (!locationNew.visited)
             {
-                m_character.location.visited = true;
-                // TODO: change score
+                locationNew.visited = true;
+
+                // change score
+                if (m_shortestPath.Count > 0 && locationNew == m_shortestPath.Peek())
+                {
+                    m_maze.score.count += 5;
+                }
+                else if (locationNew.x == m_maze.size - 1 && locationNew.y == m_maze.size - 1)
+                {
+                    m_maze.score.count += 5;
+                }
+                else if (m_maze.adjacentShortestPath.Contains(locationNew))
+                {
+                    m_maze.score.count -= 1;
+                }
+                else
+                {
+                    m_maze.score.count -= 2;
+                }
 
             }
+
             if (m_shortestPath.Count > 0 && m_shortestPath.Peek() == locationNew)
             {
                 m_shortestPath.Pop();
@@ -389,7 +436,12 @@ namespace Maze
                 {
                     m_shortestPath.Push(m_character.location);
                 }
+                else
+                {
+                    m_scores.Add(m_maze.score);
+                }
             }
+
             m_character.location = locationNew;
         }
 
@@ -560,6 +612,8 @@ namespace Maze
         public int size { get; private set; }
         public Cell[,] grid { get; private set; }
         public List<Cell> shortestPath { get; private set; }
+        public HashSet<Cell> adjacentShortestPath { get; private set; }
+        public Score score { get; private set; }
 
         private Random random;
 
@@ -569,10 +623,18 @@ namespace Maze
             this.size = size;
             this.grid = new Cell[size, size];
             this.random = new Random();
+            this.score = new Score(size);
+            this.adjacentShortestPath = new HashSet<Cell>();
 
             initializePrims();
             shortestPath = FindPathBFS(grid[0, 0], grid[size - 1, size - 1]);
-
+            foreach (Cell cell in shortestPath)
+            {
+                foreach (Cell spCell in getAccessibleNeighbors(cell))
+                { 
+                    adjacentShortestPath.Add(spCell);
+                }
+            }
         }
 
         private void initializePrims() 
@@ -679,7 +741,7 @@ namespace Maze
                     return ReconstructPath(predecessors, end);
                 }
 
-                foreach (Cell neighbor in getAccessibleNeighbors(current, visited))
+                foreach (Cell neighbor in getAccessibleNeighborsBFSHelper(current, visited))
                 {
                     if (visited.Add(neighbor))
                     {
@@ -703,13 +765,23 @@ namespace Maze
             return path;
         }
 
-        private List<Cell> getAccessibleNeighbors(Cell cell, HashSet<Cell> visited)
+        private List<Cell> getAccessibleNeighborsBFSHelper(Cell cell, HashSet<Cell> visited)
         {
             List<Cell> neighbors = new List<Cell>();
             if (cell.n != null && !visited.Contains(cell.n)) neighbors.Add(cell.n);
             if (cell.s != null && !visited.Contains(cell.s)) neighbors.Add(cell.s);
             if (cell.e != null && !visited.Contains(cell.e)) neighbors.Add(cell.e);
             if (cell.w != null && !visited.Contains(cell.w)) neighbors.Add(cell.w);
+            return neighbors;
+        }
+
+        private List<Cell> getAccessibleNeighbors(Cell cell)
+        {
+            List<Cell> neighbors = new List<Cell>();
+            if (cell.n != null) neighbors.Add(cell.n);
+            if (cell.s != null) neighbors.Add(cell.s);
+            if (cell.e != null) neighbors.Add(cell.e);
+            if (cell.w != null) neighbors.Add(cell.w);
             return neighbors;
         }
 
@@ -816,8 +888,29 @@ namespace Maze
 
     }
 
-    public class Score
+    public class Score : IComparable<Score>
     {
-        
+        public int count { get; set; }
+        public int mazeSize { get; private set; }
+
+        public Score(int mazeSize) 
+        {
+            this.count = 0;
+            this.mazeSize = mazeSize;
+        }
+
+        public int CompareTo(Score other)
+        {
+            // Returns the one with the greater count or greater size
+            int countComparison = other.count.CompareTo(count);
+            if (countComparison != 0)
+            {
+                return countComparison;
+            }
+            else
+            {
+                return other.mazeSize.CompareTo(mazeSize);
+            }
+        }
     }
 }
