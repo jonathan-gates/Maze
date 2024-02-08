@@ -18,6 +18,7 @@ namespace Maze
 
         private Maze m_maze;
         private Stack<Cell> m_shortestPath;
+        private HashSet<Cell> m_breadcrumbs;
         private int mazeStartX;
         private int m_maze_length;
         private int mazeStartY;
@@ -26,6 +27,7 @@ namespace Maze
         private bool displayShortestPath;
         private bool displayBreadcrumbs;
         private bool displayHint;
+        private bool isMazeWon;
 
         private List<Score> m_scores;
 
@@ -77,6 +79,8 @@ namespace Maze
 
             m_shortestPath = new Stack<Cell> { };
             m_scores = new List<Score>();
+            m_breadcrumbs = new HashSet<Cell> { };
+            isMazeWon = false;
 
             bool displayHighScore = false;
             bool displayCredits = false;
@@ -154,8 +158,7 @@ namespace Maze
 
             m_inputKeyboard.Update(gameTime);
 
-            // TODO: check if game is won
-            // TODO: update time in game
+            if (m_maze != null && !isMazeWon) m_maze.updateTime(gameTime);
 
             base.Update(gameTime);
         }
@@ -213,30 +216,44 @@ namespace Maze
                         SpriteEffects.None,
                         0);
 
-                // TODO: if shortest path display
+                // TODO: shortest path display texture
                 if (displayShortestPath)
                 {
                     foreach (Cell cell in m_shortestPath)
                     {
                         m_spriteBatch.Draw(
-                        m_texBrain,
-                        new Rectangle(mazeStartX + cell.x * tileSize, mazeStartY + cell.y * tileSize, tileSize, tileSize),
-                        null,
-                        Color.White,
-                        0,
-                        new Vector2(0, 0),
-                        SpriteEffects.None,
-                        0);
+                            m_texBrain,
+                            new Rectangle(mazeStartX + cell.x * tileSize, mazeStartY + cell.y * tileSize, tileSize, tileSize),
+                            null,
+                            Color.White,
+                            0,
+                            new Vector2(0, 0),
+                            SpriteEffects.None,
+                            0);
                     }
                 }
 
-                // TODO: if breadcrumbs display
+                // TODO: if breadcrumbs display texture
                 if (displayBreadcrumbs)
                 {
-
+                    if (m_breadcrumbs.Count > 0)
+                    {
+                        foreach (Cell cell in m_breadcrumbs)
+                        { 
+                            m_spriteBatch.Draw(
+                                m_texCharacter,
+                                new Rectangle(mazeStartX + cell.x * tileSize + (tileSize / 2), mazeStartY + cell.y * tileSize + (tileSize / 2), (int)(objectsOnMazeSizing * 0.5), (int)(objectsOnMazeSizing * 0.5)),
+                                null,
+                                Color.White,
+                                0,
+                                new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
+                                SpriteEffects.FlipHorizontally,
+                                0);
+                        }
+                    }
                 }
 
-                // hint display
+                // TODO: hint display texture
                 if (displayHint)
                 {
                     Cell cell;
@@ -296,8 +313,10 @@ namespace Maze
                     mazeStartY - stringSizeScore.Y),
                 scaleOutlineScore);
 
-            // TODO:  Time
-            const string strTime = "Time: 00:00";
+            // Time
+            string strTime;
+            if (m_maze != null) strTime = "Time: " + m_maze.totalTime.ToString(@"mm\:ss");
+            else strTime = "Time: 00:00";
             float scaleOutlineTime = 0.75f;
             Vector2 stringSizeTime = m_fontFoulFiend24.MeasureString(strTime) * scaleOutlineTime;
             drawOutlineText(
@@ -418,6 +437,7 @@ namespace Maze
             if (!locationNew.visited)
             {
                 locationNew.visited = true;
+                this.m_breadcrumbs.Add(locationNew);
 
                 // change score
                 if (m_shortestPath.Count > 0 && locationNew == m_shortestPath.Peek())
@@ -427,6 +447,7 @@ namespace Maze
                 else if (locationNew.x == m_maze.size - 1 && locationNew.y == m_maze.size - 1)
                 {
                     m_maze.score.count += 5;
+                    isMazeWon = true;
                 }
                 else if (m_maze.adjacentShortestPath.Contains(locationNew))
                 {
@@ -514,8 +535,10 @@ namespace Maze
 
         private void initAfterMazeCreation()
         {
+            this.isMazeWon = false;
             this.m_character = new Character(this.m_maze.grid[0, 0]);
-            this.m_maze.grid[0,0].visited = true;
+            this.m_breadcrumbs = new HashSet<Cell> { };
+            this.m_breadcrumbs.Add(this.m_maze.grid[0, 0]);
             this.m_character.breadcrumbs.Add(this.m_maze.grid[0, 0]);
             this.m_shortestPath.Clear();
 
@@ -533,43 +556,6 @@ namespace Maze
         {
             this.m_maze = new Maze(5);
             initAfterMazeCreation();
-
-            /*Maze maze = new Maze(3);
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    maze.grid[i, j].n = null;
-                    maze.grid[i, j].s = null;
-                    maze.grid[i, j].e = null;
-                    maze.grid[i, j].w = null;
-                }
-            }
-            maze.grid[0, 0].s = maze.grid[0, 1];
-
-            maze.grid[1, 0].s = maze.grid[1, 1];
-            maze.grid[1, 0].e = maze.grid[2, 0];
-
-            maze.grid[2, 0].w = maze.grid[1, 0];
-            maze.grid[2, 0].s = maze.grid[2, 1];
-
-            maze.grid[0, 1].n = maze.grid[0, 0];
-            maze.grid[0, 1].e = maze.grid[1, 1];
-            maze.grid[0, 1].s = maze.grid[0, 2];
-
-            maze.grid[1, 1].n = maze.grid[1, 0];
-            maze.grid[1, 1].s = maze.grid[1, 2];
-            maze.grid[1, 1].w = maze.grid[0, 1];
-
-            maze.grid[2, 1].n = maze.grid[2, 0];
-
-            maze.grid[0, 2].n = maze.grid[0, 1];
-
-            maze.grid[1, 2].n = maze.grid[1, 1];
-            maze.grid[1, 2].e = maze.grid[2, 2];
-
-            maze.grid[2, 2].w = maze.grid[1, 2];
-            this.m_maze = maze;*/
         }
 
         private void onNew10x10(GameTime gameTime, float scale)
@@ -625,6 +611,7 @@ namespace Maze
         public List<Cell> shortestPath { get; private set; }
         public HashSet<Cell> adjacentShortestPath { get; private set; }
         public Score score { get; private set; }
+        public TimeSpan totalTime { get; private set; }
 
         private Random random;
 
@@ -636,6 +623,7 @@ namespace Maze
             this.random = new Random();
             this.score = new Score(size);
             this.adjacentShortestPath = new HashSet<Cell>();
+            totalTime = new TimeSpan();
 
             initializePrims();
             shortestPath = FindPathBFS(grid[0, 0], grid[size - 1, size - 1]);
@@ -646,6 +634,7 @@ namespace Maze
                     adjacentShortestPath.Add(spCell);
                 }
             }
+
         }
 
         private void initializePrims() 
@@ -732,11 +721,6 @@ namespace Maze
 
         public List<Cell> FindPathBFS(Cell start, Cell end)
         {
-            foreach (Cell c in grid)
-            {
-                c.visited = false; // Reset visited status for all cells
-            }
-
             Queue<Cell> queue = new Queue<Cell>();
             Dictionary<Cell, Cell> predecessors = new Dictionary<Cell, Cell>();
             HashSet<Cell> visited = new HashSet<Cell>();
@@ -794,6 +778,11 @@ namespace Maze
             if (cell.e != null) neighbors.Add(cell.e);
             if (cell.w != null) neighbors.Add(cell.w);
             return neighbors;
+        }
+
+        public void updateTime(GameTime gameTime)
+        {
+            totalTime += gameTime.ElapsedGameTime;
         }
 
 
