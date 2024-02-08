@@ -72,6 +72,8 @@ namespace Maze
             mazeStartX = (m_graphics.PreferredBackBufferWidth - m_maze_length) / 2;
             mazeStartY = (m_graphics.PreferredBackBufferHeight - m_maze_length) / 2 + 30;
 
+            m_shortestPath = new Stack<Cell> { };
+
             bool displayHighScore = false;
             bool displayCredits = false;
             bool displayShortestPath = false;
@@ -207,6 +209,35 @@ namespace Maze
                         SpriteEffects.None,
                         0);
 
+                // TODO: if shortest path display
+                if (displayShortestPath)
+                {
+                    foreach (Cell cell in m_shortestPath)
+                    {
+                        m_spriteBatch.Draw(
+                        m_texBrain,
+                        new Rectangle(mazeStartX + cell.x * tileSize, mazeStartY + cell.y * tileSize, tileSize, tileSize),
+                        null,
+                        Color.White,
+                        0,
+                        new Vector2(0, 0),
+                        SpriteEffects.None,
+                        0);
+                    }
+                }
+
+                // TODO: if breadcrumbs display
+                if (displayBreadcrumbs)
+                {
+
+                }
+
+                // TODO: if hint display
+                if (displayHint)
+                {
+
+                }
+
                 if (m_character != null)
                 {
                     if (m_character.location != null)
@@ -223,12 +254,6 @@ namespace Maze
                     }
                 }
 
-                // TODO: if shortest path display
-
-                // TODO: if breadcrumbs display
-
-                // TODO: if hint display
-
             }
 
             // boarder
@@ -238,20 +263,6 @@ namespace Maze
                 new Rectangle(mazeStartX - borderWidth, mazeStartY - borderWidth, m_maze_length + (borderWidth * 2), m_maze_length + (borderWidth * 2)),
                 Color.Black // Specify color if your method supports it, otherwise the texture needs to be black
             );
-
-            // test string /////////////////////////
-            /*const string demo = "This is a test.";
-            float scaleOutline = 0.75f;
-            Vector2 string1Size = m_fontFoulFiend24.MeasureString(demo) * scaleOutline;
-            drawOutlineText(
-                m_spriteBatch,
-                m_fontFoulFiend24, demo,
-                Color.Black, Color.White,
-                new Vector2(
-                    m_graphics.PreferredBackBufferWidth / 2 - string1Size.X / 2,
-                    m_graphics.PreferredBackBufferHeight / 2 + (m_graphics.PreferredBackBufferHeight / 4 - string1Size.Y / 4)),
-                scaleOutline);*/
-            // test string //////////////////////
 
             // TODO: Score
             const string strScore = "Score: ";
@@ -266,12 +277,6 @@ namespace Maze
                     mazeStartY - stringSizeScore.Y),
                 scaleOutlineScore);
 
-            // TODO: High Score
-            if (displayHighScores)
-            { 
-
-            }
-
             // TODO:  Time
             const string strTime = "Time: 00:00";
             float scaleOutlineTime = 0.75f;
@@ -285,7 +290,7 @@ namespace Maze
                     mazeStartY - stringSizeTime.Y),
                 scaleOutlineTime);
 
-            // TODO: Controls
+            // Controls
             const string strControls = "Controls:\n" +
                 "  F1:  5x5 Maze\n" +
                 "  F2: 10x10 Maze\n" +
@@ -317,8 +322,7 @@ namespace Maze
                     "  Brain Texture:\n" +
                     "    craftpix.net\n" +
                     "  Foul Fiend Font:\n" +
-                    "    Chad Savage\n" +
-                    "";
+                    "    Chad Savage\n";
                 float scaleOutlineCredits = 0.5f;
                 Vector2 stringSizeCredits = m_fontFoulFiend24.MeasureString(strCredit) * scaleOutlineCredits;
                 drawOutlineText(
@@ -329,6 +333,12 @@ namespace Maze
                         50,
                         mazeStartY),
                     scaleOutlineCredits);
+            }
+
+            // TODO: High Score
+            if (displayHighScores)
+            {
+
             }
 
 
@@ -422,17 +432,36 @@ namespace Maze
 
         private void onToggleHint(GameTime gameTime, float scale)
         {
-
+            displayShortestPath = false;
+            displayHint = !displayHint;
         }
 
         private void onToggleBreadcrumbs(GameTime gameTime, float scale)
         {
-
+            displayBreadcrumbs = !displayBreadcrumbs;
         }
 
         private void onTogglePathToFinish(GameTime gameTime, float scale)
         {
+            displayHint = false;
+            displayShortestPath = !displayShortestPath;
+        }
 
+        private void initAfterMazeCreation()
+        {
+            this.m_character = new Character(this.m_maze.grid[0, 0]);
+            this.m_maze.grid[0,0].visited = true;
+            this.m_character.breadcrumbs.Add(this.m_maze.grid[0, 0]);
+            this.m_shortestPath.Clear();
+
+            // Set shortest path
+            foreach (Cell cell in m_maze.shortestPath)
+            {
+                if (!(cell.x == 0 && cell.y == 0 || cell.x == m_maze.size - 1 && cell.y == m_maze.size - 1))
+                { 
+                    this.m_shortestPath.Push(cell);
+                }
+            }
         }
 
         private void onNew5x5(GameTime gameTime, float scale)
@@ -440,7 +469,7 @@ namespace Maze
             // TODO: reset score on maze regen
             // give character to 0,0?
             this.m_maze = new Maze(5);
-            this.m_character = new Character(this.m_maze.grid[0, 0]);
+            initAfterMazeCreation();
 
             /*Maze maze = new Maze(3);
             for (int i = 0; i < 3; i++)
@@ -483,19 +512,19 @@ namespace Maze
         private void onNew10x10(GameTime gameTime, float scale)
         {
             this.m_maze = new Maze(10);
-            this.m_character = new Character(this.m_maze.grid[0, 0]);
+            initAfterMazeCreation();
         }
 
         private void onNew15x15(GameTime gameTime, float scale)
         {
             this.m_maze = new Maze(15);
-            this.m_character = new Character(this.m_maze.grid[0, 0]);
+            initAfterMazeCreation();
         }
 
         private void onNew20x20(GameTime gameTime, float scale)
         {
             this.m_maze = new Maze(20);
-            this.m_character = new Character(this.m_maze.grid[0, 0]);
+            initAfterMazeCreation();
         }
 
         private void onToggleHighScores(GameTime gameTime, float scale)
@@ -516,10 +545,12 @@ namespace Maze
     public class Character
     {
         public Cell location;
+        public List<Cell> breadcrumbs { get; set; }
 
         public Character(Cell location)
         {
             this.location = location;
+            this.breadcrumbs = new List<Cell>();
         }
 
     }
@@ -528,6 +559,7 @@ namespace Maze
     {
         public int size { get; private set; }
         public Cell[,] grid { get; private set; }
+        public List<Cell> shortestPath { get; private set; }
 
         private Random random;
 
@@ -539,6 +571,7 @@ namespace Maze
             this.random = new Random();
 
             initializePrims();
+            shortestPath = FindPathBFS(grid[0, 0], grid[size - 1, size - 1]);
 
         }
 
@@ -557,7 +590,7 @@ namespace Maze
 
             Cell startCell = grid[0,0];
             maze.Add(startCell);
-            foreach (var cell in getNeighbors(startCell))
+            foreach (var cell in getAllNeighbors(startCell))
             {
                 frontier.Add(cell);
             }
@@ -566,7 +599,7 @@ namespace Maze
             {
                 Cell ranCell = frontier.ElementAt(this.random.Next(frontier.Count));
 
-                List<Cell> neighbors = getNeighbors(ranCell);
+                List<Cell> neighbors = getAllNeighbors(ranCell);
 
                 maze.Add(ranCell);
                 randomRemoveWall(ranCell, neighbors, maze);
@@ -582,7 +615,7 @@ namespace Maze
 
         }
 
-        private List<Cell> getNeighbors(Cell cell)
+        private List<Cell> getAllNeighbors(Cell cell)
         {
             List<Cell> cells = new List<Cell>();
             if (cell.y > 0) cells.Add(grid[cell.x, cell.y - 1]);
@@ -623,6 +656,64 @@ namespace Maze
                 randomCell.n = mainCell;
             }
         }
+
+        public List<Cell> FindPathBFS(Cell start, Cell end)
+        {
+            foreach (Cell c in grid)
+            {
+                c.visited = false; // Reset visited status for all cells
+            }
+
+            Queue<Cell> queue = new Queue<Cell>();
+            Dictionary<Cell, Cell> predecessors = new Dictionary<Cell, Cell>();
+            HashSet<Cell> visited = new HashSet<Cell>();
+
+            visited.Add(start);
+            queue.Enqueue(start);
+
+            while (queue.Count > 0)
+            {
+                Cell current = queue.Dequeue();
+                if (current == end) // Path found
+                {
+                    return ReconstructPath(predecessors, end);
+                }
+
+                foreach (Cell neighbor in getAccessibleNeighbors(current, visited))
+                {
+                    if (visited.Add(neighbor))
+                    {
+                        predecessors[neighbor] = current; // Record the path
+                        queue.Enqueue(neighbor);
+                    }
+                }
+            }
+
+            return null; // No path found
+        }
+
+        private List<Cell> ReconstructPath(Dictionary<Cell, Cell> predecessors, Cell end)
+        {
+            List<Cell> path = new List<Cell>();
+            for (Cell at = end; at != null; at = predecessors.ContainsKey(at) ? predecessors[at] : null)
+            {
+                path.Add(at);
+            }
+            // path.Reverse(); // Because we added the end first, reverse it to start from the beginning
+            return path;
+        }
+
+        private List<Cell> getAccessibleNeighbors(Cell cell, HashSet<Cell> visited)
+        {
+            List<Cell> neighbors = new List<Cell>();
+            if (cell.n != null && !visited.Contains(cell.n)) neighbors.Add(cell.n);
+            if (cell.s != null && !visited.Contains(cell.s)) neighbors.Add(cell.s);
+            if (cell.e != null && !visited.Contains(cell.e)) neighbors.Add(cell.e);
+            if (cell.w != null && !visited.Contains(cell.w)) neighbors.Add(cell.w);
+            return neighbors;
+        }
+
+
 
     }
 
