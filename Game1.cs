@@ -236,10 +236,23 @@ namespace Maze
 
                 }
 
-                // TODO: if hint display
+                // hint display
                 if (displayHint)
                 {
-
+                    Cell cell;
+                    if (m_shortestPath.Count > 0)
+                    { 
+                        cell = m_shortestPath.Peek();
+                        m_spriteBatch.Draw(
+                            m_texBrain,
+                            new Rectangle(mazeStartX + cell.x * tileSize, mazeStartY + cell.y * tileSize, tileSize, tileSize),
+                            null,
+                            Color.White,
+                            0,
+                            new Vector2(0, 0),
+                            SpriteEffects.None,
+                            0);
+                    }
                 }
 
                 if (m_character != null)
@@ -268,7 +281,7 @@ namespace Maze
                 Color.Black // Specify color if your method supports it, otherwise the texture needs to be black
             );
 
-            // TODO: Score
+            // Score
             string strScore;
             if (m_maze != null) strScore = "Score: " + m_maze.score.count.ToString();
             else strScore = "Score: 0";
@@ -318,7 +331,7 @@ namespace Maze
                     mazeStartY),
                 scaleOutlineControls);
 
-            // TODO: Credits
+            // Credits
             if (displayCredits)
             {
                 const string strCredit = "Credits:\n" +
@@ -518,8 +531,6 @@ namespace Maze
 
         private void onNew5x5(GameTime gameTime, float scale)
         {
-            // TODO: reset score on maze regen
-            // give character to 0,0?
             this.m_maze = new Maze(5);
             initAfterMazeCreation();
 
