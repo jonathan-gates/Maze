@@ -1,11 +1,10 @@
 ﻿using Maze.Input;
+using Maze.Components;
+using MazeClass = Maze.Components.Maze;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace Maze
 {
@@ -16,7 +15,7 @@ namespace Maze
 
         private KeyboardInput m_inputKeyboard;
 
-        private Maze m_maze;
+        private MazeClass m_maze;
         private Stack<Cell> m_shortestPath;
         private HashSet<Cell> m_breadcrumbs;
         private int mazeStartX;
@@ -37,6 +36,7 @@ namespace Maze
         private Texture2D m_texFinish;
         private Texture2D m_texBreadcrumbs;
         private Texture2D m_texShortestPath;
+        private Texture2D m_texBackground;
 
         // fonts
         private SpriteFont m_fontFoulFiend24;
@@ -130,6 +130,7 @@ namespace Maze
             m_texFinish = this.Content.Load<Texture2D>("Images/brain");
             m_texBreadcrumbs = this.Content.Load<Texture2D>("Images/foot");
             m_texShortestPath = this.Content.Load<Texture2D>("Images/skull");
+            m_texBackground = this.Content.Load<Texture2D>("Images/graveyard");
             // tile textures
             m_texTile = this.Content.Load<Texture2D>("Images/Tiles/tile");
             m_texTileN = this.Content.Load<Texture2D>("Images/Tiles/tileN");
@@ -166,6 +167,11 @@ namespace Maze
             GraphicsDevice.Clear(Color.Black);
 
             m_spriteBatch.Begin();
+
+            m_spriteBatch.Draw(
+                m_texBackground, 
+                GraphicsDevice.Viewport.Bounds, 
+                Color.White);
 
             if (m_maze != null)
             {
@@ -430,9 +436,8 @@ namespace Maze
                 return;
             }
 
-            if (!locationNew.visited)
+            if (!m_breadcrumbs.Contains(locationNew))
             {
-                locationNew.visited = true;
                 this.m_breadcrumbs.Add(locationNew);
 
                 // change score
@@ -552,25 +557,25 @@ namespace Maze
 
         private void onNew5x5(GameTime gameTime, float scale)
         {
-            this.m_maze = new Maze(5);
+            this.m_maze = new MazeClass(5);
             initAfterMazeCreation();
         }
 
         private void onNew10x10(GameTime gameTime, float scale)
         {
-            this.m_maze = new Maze(10);
+            this.m_maze = new MazeClass(10);
             initAfterMazeCreation();
         }
 
         private void onNew15x15(GameTime gameTime, float scale)
         {
-            this.m_maze = new Maze(15);
+            this.m_maze = new MazeClass(15);
             initAfterMazeCreation();
         }
 
         private void onNew20x20(GameTime gameTime, float scale)
         {
-            this.m_maze = new Maze(20);
+            this.m_maze = new MazeClass(20);
             initAfterMazeCreation();
         }
 
@@ -588,330 +593,5 @@ namespace Maze
 
         #endregion
     }
-
-    public class Character
-    {
-        public Cell location;
-        public List<Cell> breadcrumbs { get; set; }
-
-        public Character(Cell location)
-        {
-            this.location = location;
-            this.breadcrumbs = new List<Cell>();
-        }
-
-    }
-
-    public class Maze
-    {
-        public int size { get; private set; }
-        public Cell[,] grid { get; private set; }
-        public List<Cell> shortestPath { get; private set; }
-        public HashSet<Cell> adjacentShortestPath { get; private set; }
-        public Score score { get; private set; }
-        public TimeSpan totalTime { get; private set; }
-
-        private Random random;
-
-
-        public Maze(int size)
-        {
-            this.size = size;
-            this.grid = new Cell[size, size];
-            this.random = new Random();
-            this.score = new Score(size);
-            this.adjacentShortestPath = new HashSet<Cell>();
-            totalTime = new TimeSpan();
-
-            initializePrims();
-            shortestPath = FindPathBFS(grid[0, 0], grid[size - 1, size - 1]);
-            foreach (Cell cell in shortestPath)
-            {
-                foreach (Cell spCell in getAccessibleNeighbors(cell))
-                { 
-                    adjacentShortestPath.Add(spCell);
-                }
-            }
-
-        }
-
-        private void initializePrims() 
-        {
-            for (int i = 0; i < this.size; i++)
-            {
-                for (int j = 0; j < this.size; j++)
-                {
-                    grid[i, j] = new Cell(i, j);
-                }
-            }
-
-            HashSet<Cell> maze = new HashSet<Cell> { };
-            HashSet<Cell> frontier = new HashSet<Cell> { };
-
-            Cell startCell = grid[0,0];
-            maze.Add(startCell);
-            foreach (var cell in getAllNeighbors(startCell))
-            {
-                frontier.Add(cell);
-            }
-
-            while (frontier.Count > 0)
-            {
-                Cell ranCell = frontier.ElementAt(this.random.Next(frontier.Count));
-
-                List<Cell> neighbors = getAllNeighbors(ranCell);
-
-                maze.Add(ranCell);
-                randomRemoveWall(ranCell, neighbors, maze);
-
-                foreach (var cell in neighbors)
-                {
-                    if (!maze.Contains(cell) && !frontier.Contains(cell)) frontier.Add(cell);
-                }
-
-                frontier.Remove(ranCell);
-
-            }
-
-        }
-
-        private List<Cell> getAllNeighbors(Cell cell)
-        {
-            List<Cell> cells = new List<Cell>();
-            if (cell.y > 0) cells.Add(grid[cell.x, cell.y - 1]);
-            if (cell.x > 0) cells.Add(grid[cell.x - 1, cell.y]);
-            if (cell.y < size - 1) cells.Add(grid[cell.x, cell.y + 1]);
-            if (cell.x < size - 1) cells.Add(grid[cell.x + 1, cell.y]);
-            return cells;
-        }
-
-        private void randomRemoveWall(Cell mainCell, List<Cell> neightbors, HashSet<Cell> maze)
-        {
-            HashSet<Cell> options = new HashSet<Cell>();
-            foreach (var cell in neightbors)
-            { 
-                if (maze.Contains(cell)) options.Add(cell);
-            }
-            
-            Cell randomCell = options.ElementAt(this.random.Next(options.Count));
-
-            if (mainCell.x > randomCell.x)
-            {
-                mainCell.w = randomCell;
-                randomCell.e = mainCell;
-            }
-            else if (mainCell.x < randomCell.x)
-            {
-                mainCell.e = randomCell;
-                randomCell.w = mainCell;
-            }
-            else if (mainCell.y > randomCell.y)
-            {
-                mainCell.n = randomCell;
-                randomCell.s = mainCell;
-            }
-            else
-            {
-                mainCell.s = randomCell;
-                randomCell.n = mainCell;
-            }
-        }
-
-        // chatgpt for BFS
-        public List<Cell> FindPathBFS(Cell start, Cell end)
-        {
-            Queue<Cell> queue = new Queue<Cell>();
-            Dictionary<Cell, Cell> predecessors = new Dictionary<Cell, Cell>();
-            HashSet<Cell> visited = new HashSet<Cell>
-            {
-                start
-            };
-
-            queue.Enqueue(start);
-
-            while (queue.Count > 0)
-            {
-                Cell current = queue.Dequeue();
-                if (current == end) // Path found
-                {
-                    return ReconstructPath(predecessors, end);
-                }
-
-                foreach (Cell neighbor in getAccessibleNeighborsBFSHelper(current, visited))
-                {
-                    if (visited.Add(neighbor))
-                    {
-                        predecessors[neighbor] = current; // Record the path
-                        queue.Enqueue(neighbor);
-                    }
-                }
-            }
-
-            return null; // No path found
-        }
-
-        private List<Cell> ReconstructPath(Dictionary<Cell, Cell> predecessors, Cell end)
-        {
-            List<Cell> path = new List<Cell>();
-            for (Cell at = end; at != null; at = predecessors.ContainsKey(at) ? predecessors[at] : null)
-            {
-                path.Add(at);
-            }
-            // path.Reverse(); // Because we added the end first, reverse it to start from the beginning
-            return path;
-        }
-
-        private List<Cell> getAccessibleNeighborsBFSHelper(Cell cell, HashSet<Cell> visited)
-        {
-            List<Cell> neighbors = new List<Cell>();
-            if (cell.n != null && !visited.Contains(cell.n)) neighbors.Add(cell.n);
-            if (cell.s != null && !visited.Contains(cell.s)) neighbors.Add(cell.s);
-            if (cell.e != null && !visited.Contains(cell.e)) neighbors.Add(cell.e);
-            if (cell.w != null && !visited.Contains(cell.w)) neighbors.Add(cell.w);
-            return neighbors;
-        }
-
-        private List<Cell> getAccessibleNeighbors(Cell cell)
-        {
-            List<Cell> neighbors = new List<Cell>();
-            if (cell.n != null) neighbors.Add(cell.n);
-            if (cell.s != null) neighbors.Add(cell.s);
-            if (cell.e != null) neighbors.Add(cell.e);
-            if (cell.w != null) neighbors.Add(cell.w);
-            return neighbors;
-        }
-
-        public void updateTime(GameTime gameTime)
-        {
-            totalTime += gameTime.ElapsedGameTime;
-        }
-
-
-
-    }
-
-    public class Cell
-    {
-        public int x { get; set; }
-        public int y { get; set; }
-        public Cell n { get; set; }
-        public Cell s { get; set; }
-        public Cell e { get; set; }
-        public Cell w { get; set; }
-        public bool visited { get; set; }
-
-        public Cell(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-            this.visited = false;
-        }
-
-        public bool isNotWalled()
-        {
-            return n != null && s != null && e != null && w != null;
-        }
-
-        public bool isN()
-        {
-            return n == null && s != null && e != null && w != null;
-        }
-
-        public bool isNS()
-        {
-            return n == null && s == null && e != null && w != null;
-        }
-
-        public bool isNSE()
-        {
-            return n == null && s == null && e == null && w != null;
-        }
-
-        public bool isNSEW()
-        {
-            return n == null && s == null && e == null && w == null;
-        }
-
-        public bool isNSW()
-        {
-            return n == null && s == null && e != null && w == null;
-        }
-
-        public bool isNE()
-        {
-            return n == null && s != null && e == null && w != null;
-        }
-
-        public bool isNEW()
-        {
-            return n == null && s != null && e == null && w == null;
-        }
-
-        public bool isNW()
-        {
-            return n == null && s != null && e != null && w == null;
-        }
-
-        public bool isS()
-        {
-            return n != null && s == null && e != null && w != null;
-        }
-
-        public bool isSE()
-        {
-            return n != null && s == null && e == null && w != null;
-        }
-
-        public bool isSEW()
-        {
-            return n != null && s == null && e == null && w == null;
-        }
-
-        public bool isSW()
-        {
-            return n != null && s == null && e != null && w == null;
-        }
-
-        public bool isE()
-        {
-            return n != null && s != null && e == null && w != null;
-        }
-
-        public bool isEW()
-        {
-            return n != null && s != null && e == null && w == null;
-        }
-
-        public bool isW()
-        {
-            return n != null && s != null && e != null && w == null;
-        }
-
-    }
-
-    public class Score : IComparable<Score>
-    {
-        public int count { get; set; }
-        public int mazeSize { get; private set; }
-
-        public Score(int mazeSize) 
-        {
-            this.count = 0;
-            this.mazeSize = mazeSize;
-        }
-
-        public int CompareTo(Score other)
-        {
-            // Returns the one with the greater count or greater size
-            int countComparison = other.count.CompareTo(count);
-            if (countComparison != 0)
-            {
-                return countComparison;
-            }
-            else
-            {
-                return other.mazeSize.CompareTo(mazeSize);
-            }
-        }
-    }
+    
 }
