@@ -362,10 +362,6 @@ namespace Maze
             {
                 const string strCredit = "Credits:\n" +
                     "  Coded by Jonathan Gates\n" +
-                    "  Zombie Texture:\n" +
-                    "    Irina Mir (irmirx)\n" +
-                    "  Brain Texture:\n" +
-                    "    craftpix.net\n" +
                     "  Foul Fiend Font:\n" +
                     "    Chad Savage\n";
                 float scaleOutlineCredits = 0.5f;
