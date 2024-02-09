@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System;
 
 namespace Maze
 {
@@ -128,7 +129,7 @@ namespace Maze
             m_texBoarder = this.Content.Load<Texture2D>("Images/boarder");
             m_texCharacter = this.Content.Load<Texture2D>("Images/zombie");
             m_texFinish = this.Content.Load<Texture2D>("Images/brain");
-            m_texBreadcrumbs = this.Content.Load<Texture2D>("Images/foot");
+            m_texBreadcrumbs = this.Content.Load<Texture2D>("Images/bootprint");
             m_texShortestPath = this.Content.Load<Texture2D>("Images/skull");
             m_texBackground = this.Content.Load<Texture2D>("Images/graveyard2");
             // tile textures
@@ -215,7 +216,7 @@ namespace Maze
                         new Rectangle(mazeStartX + (m_maze.size - 1) * tileSize + (tileSize / 2), mazeStartY + (m_maze.size - 1) * tileSize + (tileSize / 2), objectsOnMazeSizing, objectsOnMazeSizing),
                         null,
                         Color.White,
-                        (float)(-0.3),
+                        0,
                         new Vector2(m_texFinish.Width / 2, m_texFinish.Height / 2),
                         SpriteEffects.None,
                         0);
@@ -231,7 +232,7 @@ namespace Maze
                                 m_texBreadcrumbs,
                                 new Rectangle(mazeStartX + cell.x * tileSize + (tileSize / 2), mazeStartY + cell.y * tileSize + (tileSize / 2), (int)(objectsOnMazeSizing * 0.5), (int)(objectsOnMazeSizing * 0.5)),
                                 null,
-                                Color.White,
+                                Color.Gray,
                                 0,
                                 new Vector2(m_texBreadcrumbs.Width / 2, m_texBreadcrumbs.Height / 2),
                                 SpriteEffects.FlipHorizontally,
@@ -276,17 +277,21 @@ namespace Maze
 
                 if (m_character != null)
                 {
+                    float scale = tileSize * 0.9f / (float)m_texCharacter.Height;
+                    int scaledWidth = (int)(m_texCharacter.Width * scale);
+                    int scaledHeight = (int)(m_texCharacter.Height * scale);
+
                     if (m_character.location != null)
                     {
                         m_spriteBatch.Draw(
-                        m_texCharacter,
-                        new Rectangle(mazeStartX + m_character.location.x * tileSize + (tileSize / 2), mazeStartY + m_character.location.y * tileSize + (tileSize / 2), objectsOnMazeSizing, objectsOnMazeSizing),
-                        null,
-                        Color.White,
-                        0,
-                        new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
-                        SpriteEffects.FlipHorizontally,
-                        0);
+                            m_texCharacter,
+                            new Rectangle(mazeStartX + m_character.location.x * tileSize + (tileSize / 2), mazeStartY + m_character.location.y * tileSize + (tileSize / 2), scaledWidth, scaledHeight),
+                            null,
+                            Color.White,
+                            0,
+                            new Vector2(m_texCharacter.Width / 2, m_texCharacter.Height / 2),
+                            SpriteEffects.None,
+                            0);
                     }
                 }
 
