@@ -130,7 +130,7 @@ namespace Maze
             m_texFinish = this.Content.Load<Texture2D>("Images/brain");
             m_texBreadcrumbs = this.Content.Load<Texture2D>("Images/foot");
             m_texShortestPath = this.Content.Load<Texture2D>("Images/skull");
-            m_texBackground = this.Content.Load<Texture2D>("Images/graveyard");
+            m_texBackground = this.Content.Load<Texture2D>("Images/graveyard2");
             // tile textures
             m_texTile = this.Content.Load<Texture2D>("Images/Tiles/tile");
             m_texTileN = this.Content.Load<Texture2D>("Images/Tiles/tileN");
