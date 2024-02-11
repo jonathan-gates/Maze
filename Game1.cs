@@ -151,12 +151,17 @@ namespace Maze
             m_texTileW = this.Content.Load<Texture2D>("Images/Tiles/tileW");
         }
 
+        protected void processInput(GameTime gameTime)
+        {
+            m_inputKeyboard.Update(gameTime);
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            m_inputKeyboard.Update(gameTime);
+            processInput(gameTime);
 
             if (m_maze != null && !isMazeWon) m_maze.updateTime(gameTime);
 
@@ -221,7 +226,6 @@ namespace Maze
                         SpriteEffects.None,
                         0);
 
-                // TODO: if breadcrumbs display texture
                 if (displayBreadcrumbs)
                 {
                     if (m_breadcrumbs.Count > 0)
