@@ -9,7 +9,7 @@ using System;
 
 namespace Maze
 {
-    public class Game1 : Game
+    public class MazeGame : Game
     {
         private GraphicsDeviceManager m_graphics;
         private SpriteBatch m_spriteBatch;
@@ -61,7 +61,7 @@ namespace Maze
         private Texture2D m_texTileEW;
         private Texture2D m_texTileW;
 
-        public Game1()
+        public MazeGame()
         {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
