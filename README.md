@@ -1,9 +1,12 @@
 # Credits
 
-### Foul Fiend Font
-Gotten from https://www.1001fonts.com/foul-fiend-font.html
+### Game Developer
+Jonathan Gates
 
-Free for Personal and Commercial purposes
+### Foul Fiend Font
+Obtained from https://www.1001fonts.com/foul-fiend-font.html
+
+"Free for Personal and Commercial purposes"
 
 Originated at: 
 

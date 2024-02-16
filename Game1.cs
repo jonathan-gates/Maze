@@ -306,9 +306,9 @@ namespace Maze
             // boarder
             int borderWidth = 6;
             m_spriteBatch.Draw(
-                m_texBoarder, // A solid black texture; ensure you have a 1x1 black texture to scale
+                m_texBoarder,
                 new Rectangle(mazeStartX - borderWidth, mazeStartY - borderWidth, m_maze_length + (borderWidth * 2), m_maze_length + (borderWidth * 2)),
-                Color.Black // Specify color if your method supports it, otherwise the texture needs to be black
+                Color.Black
             );
 
             // Score
@@ -367,7 +367,8 @@ namespace Maze
             if (displayCredits)
             {
                 const string strCredit = "Credits:\n" +
-                    "  Coded by Jonathan Gates\n" +
+                    "  Developed by:\n" +
+                    "    Jonathan Gates\n" +
                     "  Foul Fiend Font:\n" +
                     "    Chad Savage\n";
                 float scaleOutlineCredits = 0.5f;
