@@ -114,6 +114,8 @@ namespace Maze
             m_inputKeyboard.registerCommand(Keys.F5, true, new IInputDevice.CommandDelegate(onToggleHighScores));
             m_inputKeyboard.registerCommand(Keys.F6, true, new IInputDevice.CommandDelegate(onToggleCredits));
 
+            this.m_maze = new MazeClass(5);
+            initAfterMazeCreation();
 
             base.Initialize();
         }
@@ -131,7 +133,7 @@ namespace Maze
             m_texFinish = this.Content.Load<Texture2D>("Images/brain");
             m_texBreadcrumbs = this.Content.Load<Texture2D>("Images/bootprint");
             m_texShortestPath = this.Content.Load<Texture2D>("Images/skull");
-            m_texBackground = this.Content.Load<Texture2D>("Images/graveyard2");
+            m_texBackground = this.Content.Load<Texture2D>("Images/graveyard");
             // tile textures
             m_texTile = this.Content.Load<Texture2D>("Images/Tiles/tile");
             m_texTileN = this.Content.Load<Texture2D>("Images/Tiles/tileN");
@@ -177,7 +179,7 @@ namespace Maze
             m_spriteBatch.Draw(
                 m_texBackground, 
                 GraphicsDevice.Viewport.Bounds, 
-                Color.White);
+                Color.Cyan);
 
             if (m_maze != null)
             {
